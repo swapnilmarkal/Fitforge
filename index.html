@@ -2063,7 +2063,7 @@
        `<span class="chip ${M === o[0] ? "on" : ""}" onclick="setMode('${o[0]}')">${o[1]}</span>`,
    )
    .join("")}</div>
- <label class="fl" style="margin-bottom:10px">Edit something you saved<select onchange="loadE(this.value)"><option value="">${ed ? "Editing: " + esc(B.name) : "Choose to edit…"}</option>${cu.length ? `<optgroup label="Routines &amp; workouts">${cu.map((r) => `<option value="r:${r.id}">${esc(r.name)} · ${r.single ? "Workout" : "Routine"}</option>`).join("")}</optgroup>` : ""}${
+ <label class="fl" style="margin-bottom:10px">Edit something you saved<select onchange="loadE(this.value)"><option value="">${ed ? "Editing: " + esc(B.name) : "Choose to edit…"}</option><option value="new">➕ Start a new blank one</option>${cu.length ? `<optgroup label="Routines &amp; workouts">${cu.map((r) => `<option value="r:${r.id}">${esc(r.name)} · ${r.single ? "Workout" : "Routine"}</option>`).join("")}</optgroup>` : ""}${
    Object.keys(cw).length
      ? `<optgroup label="Warm-ups">${Object.keys(cw)
          .map((n) => `<option value="w:${esc(n)}">${esc(n)}</option>`)
@@ -2076,7 +2076,7 @@
          .join("")}</optgroup>`
      : ""
  }</select></label>
- <div class="card"><div class="row"><label class="fl">${nm}<input placeholder="Give it a name" value="${esc(B.name)}" oninput="B.name=this.value"></label>${M === "warmup" || M === "stretch" ? "" : `<label class="fl">Description (optional)<input placeholder="A short note" value="${esc(B.desc)}" oninput="B.desc=this.value"></label>`}</div></div>
+ ${ed ? `<div class="note" style="margin-bottom:10px;color:var(--tx)">✏️ You are editing <b>${esc(B.name)}</b>. Changes apply only when you press <b>Update</b>.<div style="margin-top:8px"><button class="btn g sm" onclick="resetB()">Start a new blank one instead</button></div></div>` : ""}<div class="card"><div class="row"><label class="fl">${nm}<input placeholder="Give it a name" value="${esc(B.name)}" oninput="B.name=this.value"></label>${M === "warmup" || M === "stretch" ? "" : `<label class="fl">Description (optional)<input placeholder="A short note" value="${esc(B.desc)}" oninput="B.desc=this.value"></label>`}</div></div>
  ${M === "week" ? `<div class="chips">${DAYS.map((x) => `<span class="chip ${x === B.day ? "on" : ""}" onclick="B.day='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div>` : ""}
  <div class="card"><h3>${M === "week" ? B.day : M === "workout" ? "Your workout" : M === "warmup" ? "Your warm-up" : "Your stretch"}</h3>${M === "week" ? `<div class="row" style="margin:10px 0"><label class="fl">Day title<input placeholder="e.g. Back &amp; Biceps" value="${esc(d.title)}" oninput="gd().title=this.value"></label><label class="mut" style="flex:0 0 auto"><input type="checkbox" style="width:auto" ${d.rest ? "checked" : ""} onchange="gd().rest=this.checked;render()"> Rest day</label></div>${days.length && !d.rest ? `<select class="pk" onchange="copyDay(this.value)"><option value="">Copy another day into this one…</option>${days.map((x) => `<option>${x}</option>`).join("")}</select>` : ""}` : ""}
  ${d.rest ? '<p class="mut">Enjoy your rest 😴</p>' : M === "warmup" ? wp : M === "stretch" ? sp : wp + mp + sp}</div>
@@ -2113,6 +2113,8 @@
         go("today");
       }
       function delR(id) {
+        if (!confirm("Delete this permanently?")) return;
+        selR = "";
         S.set(
           "fw_custom",
           S.get("fw_custom", []).filter((r) => r.id !== id),
@@ -2302,6 +2304,10 @@
         render();
       }
       function loadE(v) {
+        if (v === "new") {
+          resetB();
+          return;
+        }
         if (!v) return;
         const t = v[0],
           id = v.slice(2);
