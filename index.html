@@ -667,6 +667,59 @@
           padding: 2px 6px;
         }
       }
+      .gauge {
+        position: relative;
+        height: 8px;
+        border-radius: 99px;
+        margin: 12px 0 6px;
+        background: linear-gradient(
+          90deg,
+          #facc15 0 14%,
+          #6ee7a0 14% 40%,
+          #fb923c 40% 60%,
+          #f87171 60%
+        );
+      }
+      .gauge i {
+        position: absolute;
+        top: -4px;
+        width: 4px;
+        height: 16px;
+        background: #fff;
+        border-radius: 2px;
+        transform: translateX(-2px);
+      }
+      .brow .fl input,
+      .brow .fl select {
+        height: 40px;
+      }
+      .brow > .xb {
+        flex: 0 0 44px;
+        height: 40px;
+        padding: 0;
+        align-self: flex-start;
+        margin-top: 20px;
+        font-size: 16px;
+      }
+      .brow > .num {
+        align-self: flex-start;
+        margin-top: 30px;
+        padding: 0;
+      }
+      .nn {
+        font-size: 11px;
+        color: var(--ac2);
+      }
+      .pk {
+        margin: 0 0 10px;
+      }
+      .eg.e3 {
+        grid-template-columns: 1fr 1fr 40px;
+      }
+      .tip {
+        border-color: #3a2a1c;
+        background: linear-gradient(120deg, #1b1610, #141821);
+      }
       footer {
         text-align: center;
         color: var(--mut);
@@ -789,6 +842,54 @@
           ]
         ],
         "exercises": {
+          "Crunches": [
+            "Core",
+            "Lie back, curl your shoulders off the floor and squeeze the abs; lower slowly."
+          ],
+          "Leg raises": [
+            "Core",
+            "Lying flat, lift straight legs to vertical and lower without arching the back."
+          ],
+          "Russian twist": [
+            "Core",
+            "Seated and leaning back, rotate your torso side to side with control."
+          ],
+          "Leg swings": [
+            "Mobility",
+            "Hold a support and swing one leg forward and back to loosen hips and hamstrings."
+          ],
+          "Hip circles": [
+            "Mobility",
+            "Hands on hips, draw big slow circles with your pelvis to warm the hip joints."
+          ],
+          "Bodyweight squats": [
+            "Legs",
+            "Squat with just your body weight, chest up, to warm the legs before lifting."
+          ],
+          "Walking lunges": [
+            "Legs",
+            "Step forward into a lunge and keep walking, alternating legs."
+          ],
+          "Chest stretch": [
+            "Mobility",
+            "Place your forearm on a doorframe and turn away to open the chest."
+          ],
+          "Triceps stretch": [
+            "Mobility",
+            "Reach one hand down your back and gently press the elbow with the other hand."
+          ],
+          "Quad stretch": [
+            "Mobility",
+            "Standing, pull one heel to your glute and keep the knees together."
+          ],
+          "Calf stretch": [
+            "Mobility",
+            "Press a heel down with the leg straight and lean into a wall."
+          ],
+          "Glute stretch": [
+            "Mobility",
+            "Lying down, cross an ankle over the opposite knee and pull the leg toward you."
+          ],
           "Treadmill": [
             "Cardio",
             "Light walk or jog to raise body temperature and heart rate before lifting.",
@@ -1354,13 +1455,16 @@
         selDay = null,
         selR = "",
         series = "Body weight",
-        pdate = "";
+        pdate = "",
+        wkSel = "",
+        gq = "",
+        tipN = 0;
       const V = {
         dash: "Dashboard",
         today: "Today",
         routines: "Routines",
         lib: "Exercises",
-        learn: "Learn",
+        learn: "Muscle Guide",
         prog: "Progress",
         build: "Builder",
       };
@@ -1381,69 +1485,89 @@
           ? ["Underweight", "#facc15"]
           : b < 25
             ? ["Healthy", "#6ee7a0"]
-            : ["High", "#f87171"];
+            : b < 30
+              ? ["Overweight", "#fb923c"]
+              : ["Obese", "#f87171"];
       const bpill = (b) =>
         b
           ? `<span class="pill" style="margin:0;color:${bm(b)[1]};border-color:${bm(b)[1]}"><b style="color:inherit">${b}</b> · ${bm(b)[0]}</span>`
           : "—";
-      function dashStats(r) {
+      function dashStats(r, nr) {
         const n = new Date(),
           ix = (n.getDay() + 6) % 7,
-          td = iso();
-        let miss = 0,
-          dn = 0;
-        DAYS.forEach((x, i) => {
-          const dt = iso(
-            new Date(n.getFullYear(), n.getMonth(), n.getDate() - ix + i),
-          );
-          if (dayDone(dt)) dn++;
-          else if (!r.single && !(r.days[x] || {}).rest && dt < td) miss++;
-        });
-        let nx = "—";
-        for (let k = 1; k <= 7; k++) {
-          const x = DAYS[(ix + k) % 7],
-            d = r.days[x];
-          if (d && !d.rest) {
-            nx = r.single ? "Any day" : x.slice(0, 3) + " · " + d.title;
-            break;
-          }
-        }
-        const L = S.get("fw_logs", [])
+          td = iso(),
+          P = S.get("fw_prof", {}),
+          h = S.get("fw_h", 0),
+          W = S.get("fw_logs", [])
             .filter((l) => l.s === "Body weight")
-            .sort((a, b) => (a.d < b.d ? -1 : 1))
-            .pop(),
-          t = (r.days[todayName()] || {}).title || "—";
-        const c = (l, v, sub, col, sz) =>
-          `<div class="card stat"><span class="mut">${l}</span><b style="${col ? "color:" + col + ";" : ""}${sz ? "font-size:" + sz + "px" : ""}">${v}</b><span class="mut" style="font-size:12px">${sub || ""}</span></div>`;
-        return (
-          c("Next up", esc(nx), "", 0, 17) +
-          c(
-            "Body weight",
-            L ? L.v + " kg" : "—",
-            L ? "Logged " + L.d : "Log it in Progress",
-          ) +
-          c(
-            "BMI",
-            L && L.b ? L.b : "—",
-            L && L.b ? bm(L.b)[0] : "Save your height in Progress",
-            L && L.b ? bm(L.b)[1] : "",
+            .sort((a, b) => (a.d < b.d ? -1 : 1)),
+          L = W[W.length - 1];
+        let dn = 0,
+          pl = 0;
+        DAYS.forEach((x, i) => {
+          if (
+            dayDone(
+              iso(
+                new Date(n.getFullYear(), n.getMonth(), n.getDate() - ix + i),
+              ),
+            )
           )
+            dn++;
+          if (!(r.days[x] || {}).rest) pl++;
+        });
+        const c = (l, v, sub, col, sz) =>
+            `<div class="card stat"><span class="mut">${l}</span><b style="${col ? "color:" + col + ";" : ""}${sz ? "font-size:" + sz + "px" : ""}">${v}</b><span class="mut" style="font-size:12px">${sub || ""}</span></div>`,
+          t0 = r.days[todayName()] || {};
+        let nx;
+        if (!t0.rest && !dayDone(td)) nx = ["Today", esc(t0.title)];
+        else {
+          const d = r.days[DAYS[(ix + 1) % 7]] || {};
+          nx = ["Tomorrow", d.rest ? "Rest day 😴" : esc(d.title)];
+        }
+        const wc = L
+          ? c("Body weight", L.v + " kg", "Logged " + L.d)
+          : `<div class="card stat"><span class="mut">Body weight</span><b style="font-size:17px">Not added yet</b><button class="btn sm" style="margin-top:8px" onclick="go('prog')">Add weight</button></div>`;
+        let g = "";
+        if (P.goal) {
+          let sub = "Keep logging to see progress";
+          if (W.length > 1) {
+            const dd = +(L.v - W[0].v).toFixed(1);
+            sub = (dd > 0 ? "+" : "") + dd + " kg since you started";
+          }
+          g = c("Your goal", GOALS[P.goal], sub, 0, 17);
+        }
+        return (
+          (nr ? "" : c("Next up", nx[1], nx[0], 0, 17)) +
+          wc +
+          bmiCard(L, h, +P.age) +
+          (nr || r.single
+            ? ""
+            : c("This week", dn + " / " + pl, "workouts done")) +
+          (nr ? "" : g)
         );
       }
-      function cmp() {
-        const wl = S.get("fw_wl", {}),
-          t = todayName(),
-          a = wl[iso(new Date(Date.now() - 7 * 864e5))] || {},
-          b = wl[iso()] || {},
-          ns = [...new Set([...Object.keys(a), ...Object.keys(b)])],
-          tb = Object.keys(b).length,
-          hd = tb ? `${t}: last week vs today` : `Last ${t}’s workout`;
-        if (!ns.length)
-          return `<h2>${hd}</h2><div class="note">Nothing logged last ${t} yet. Log your sets in Today’s workout and they’ll show up here next week so you can compare.</div>`;
-        return `<h2>${hd}</h2><div class="card sc"><table><tr><th>Exercise</th><th>Last ${t}</th>${tb ? "<th>Today</th>" : ""}</tr>${ns.map((n) => `<tr><td>${esc(n)}</td><td>${a[n] ? fmt(a[n]) : "—"}</td>${tb ? `<td><b>${b[n] ? fmt(b[n]) : "—"}</b></td>` : ""}</tr>`).join("")}</table></div>`;
+      function bmiCard(L, h, age) {
+        const bx = (b) =>
+            `<div class="card stat"><span class="mut">BMI</span>${b}</div>`,
+          sm = (t) =>
+            `<span class="mut" style="font-size:12px;display:block">${t}</span>`;
+        if (!L || !h)
+          return bx(
+            `<b style="font-size:17px">Not available</b>${sm(!h && !L ? "Add your height and weight" : !h ? "Add your height" : "Add your weight")}<button class="btn sm" style="margin-top:8px" onclick="go('prog')">Add details</button>`,
+          );
+        const b = +(L.v / (h / 100) ** 2).toFixed(1);
+        if (age && age < 18)
+          return bx(
+            `<b>${b}</b>${sm("For under‑18s, BMI is judged on age and sex growth charts, so no label is shown. A doctor can interpret it.")}`,
+          );
+        const c = bm(b),
+          pp = Math.max(0, Math.min(100, ((b - 15) / 25) * 100));
+        return bx(
+          `<b style="color:${c[1]}">${b}</b><span style="color:${c[1]};font-weight:600;font-size:14px">${c[0]}</span><div class="gauge"><i style="left:${pp}%"></i></div>${sm("Healthy range: 18.5 – 24.9" + (age >= 65 ? ". At 65+, a slightly higher BMI is often fine." : ""))}`,
+        );
       }
       function dcard(lbl, dt, dn, isT) {
-        const r = active(),
+        const r = isT ? effR() : active(),
           d = r.days[dn],
           wl = S.get("fw_wl", {})[dt] || {},
           tk = S.get("fw_done_" + dt, []),
@@ -1489,7 +1613,7 @@
                 .join(""),
           )
           .join("");
-        return `<div class="card" style="border-color:#22c55e55">${hd}${ttl}${rows}</div>`;
+        return `<div class="card" style="border-color:#22c55e55">${hd}${ttl}${d.note ? `<p class="mut">📝 ${esc(d.note)}</p>` : ""}${rows}</div>`;
       }
       function dcards() {
         const n = new Date(),
@@ -1519,7 +1643,7 @@
                   : dt === td
                     ? "t"
                     : "n";
-          return `<div class="wd ${c}" onclick="selDay='${x}';go('routines')"><b>${x.slice(0, 3)}</b>${dt.slice(8)}<br>${dn ? "✓" : rs ? "😴" : dt < td && dt >= since && !r.single ? "✗" : "·"}</div>`;
+          return `<div class="wd ${c}" onclick="wkSel='${x}';render()"><b>${x.slice(0, 3)}</b>${dt.slice(8)}<br>${dn ? "✓" : rs ? "😴" : dt < td && dt >= since && !r.single ? "✗" : "·"}</div>`;
         }).join("");
       }
       const W_MSG =
@@ -1582,6 +1706,8 @@
         if (!d) return '<p class="mut">No workout planned.</p>';
         if (d.rest)
           return `<div class="card"><h3>😴 Rest Day</h3><p class="mut">Recovery is where growth happens. Hydrate, sleep well and stretch lightly.</p></div>`;
+        if (d.note && !(d.sections || []).length)
+          return `<div class="note" style="color:var(--tx)">📝 ${esc(d.note)}</div>`;
         const done = S.get(doneKey(), []),
           td = S.get("fw_wl", {})[iso()] || {},
           sc = d.sections || [],
@@ -1693,27 +1819,59 @@
       }
       const R = {
         dash() {
-          const r = active(),
+          const r = effR(),
+            nr = noR(),
             t = todayName(),
             d = r.days[t] || { title: "—" },
-            done =
-              S.get(doneKey(), []).length +
-              Object.keys(S.get("fw_wl", {})[iso()] || {}).length,
-            tot = total(r, t),
-            logs = S.get("fw_logs", [])
-              .filter((l) => l.s === "Body weight")
-              .sort((a, b) => (a.d < b.d ? -1 : 1)),
-            last = logs[logs.length - 1];
-          return `<div class="hero"><div class="mut">${t} · ${new Date().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}</div><h1>Today: ${esc(d.title)}</h1><p class="mut">Active plan: ${esc(r.name)}</p><button class="btn" onclick="go('today')">Start workout →</button></div>
- <h2>This week</h2><div class="week">${wk(r)}</div><div class="mut" style="font-size:12px;margin-top:8px">🟢 worked out · 🔴 missed · 😴 rest day</div>
- <h2>Overview</h2><div class="grid">${dashStats(r)}</div>${dcards()}
- <h2>Daily motivation</h2><div class="card">${quote()}<button class="btn g sm" style="margin-top:12px" onclick="render()">Another quote</button></div>${bkCard()}`;
+            P = S.get("fw_prof", {}),
+            hr = new Date().getHours(),
+            gr =
+              hr < 12
+                ? "Good morning"
+                : hr < 17
+                  ? "Good afternoon"
+                  : "Good evening",
+            ov = S.get("fw_ov", {})[iso()];
+          return `<div class="hero"><div class="mut">${t} · ${new Date().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}</div><h1 style="margin-top:4px">${gr}, ${esc(P.name || "there")} 👋</h1>${nr ? `<p>You don’t have a routine yet. Let’s create one!</p><div class="row"><button class="btn" onclick="go('routines')">Pick a ready-made routine</button><button class="btn g" onclick="go('build')">Build my own</button></div>` : `<p class="mut" style="margin:6px 0 14px">Today: <b style="color:var(--tx)">${esc(d.title)}</b>${ov ? ' <span class="tag">changed for today</span>' : ""}</p><button class="btn" onclick="go('today')">${d.rest ? "View today" : dayDone(iso()) ? "View today’s workout" : "Start workout →"}</button>`}<div style="margin-top:18px">${quote()}</div></div>
+ ${tipCard()}${nr ? "" : weekSec(r)}<h2>Overview</h2><div class="grid">${dashStats(r, nr)}</div>${nr ? "" : dcards()}${bkCard()}<p style="text-align:center;margin-top:18px"><button class="btn g sm" onclick="go('onb')">Edit profile</button></p>`;
         },
         today() {
-          const r = active(),
-            t = todayName();
-          return `<h1>Today’s workout</h1><p class="mut">${t} · ${esc(r.days[t]?.title || "")} · ${esc(r.name)}</p><div class="card" style="margin:14px 0">${quote(new Date().getDate())}</div><div class="note" style="margin-bottom:12px">New to lifting? A <b>set</b> is one round of reps. “3 sets · 10 reps” means: do 10 reps, rest about a minute, and repeat 3 times in total.</div>${dayHTML(r, t, true)}`;
+          if (noR())
+            return `<h1>Today’s workout</h1><div class="hero" style="margin-top:14px"><p>You don’t have a routine yet. Let’s create one!</p><div class="row"><button class="btn" onclick="go('routines')">Pick a ready-made routine</button><button class="btn g" onclick="go('build')">Build my own</button></div></div>`;
+          const r = effR(),
+            t = todayName(),
+            ov = S.get("fw_ov", {})[iso()];
+          return `<h1>Today’s workout</h1><p class="mut">${t} · ${esc(r.days[t]?.title || "")} · ${esc(ov ? "Custom for today" : r.name)}</p><div class="row" style="margin:10px 0"><button class="btn g sm" style="flex:0 0 auto" onclick="shareToday()">Share workout (JSON)</button><button class="btn g sm" style="flex:0 0 auto" onclick="go('routines')">Change today’s workout</button></div><div class="card" style="margin:14px 0">${quote(new Date().getDate())}</div><div class="note" style="margin-bottom:12px">New to lifting? A <b>set</b> is one round of reps. “3 sets · 10 reps” means: do 10 reps, rest about a minute, and repeat 3 times in total.</div>${dayHTML(r, t, true)}`;
         },
+        onb() {
+          const P = S.get("fw_prof", {}),
+            first = !S.get("fw_prof", null),
+            h = S.get("fw_h", ""),
+            W = S.get("fw_logs", [])
+              .filter((l) => l.s === "Body weight")
+              .sort((a, b) => (a.d < b.d ? -1 : 1))
+              .pop(),
+            op = (a, v) =>
+              a
+                .map(
+                  (x) =>
+                    `<option value="${x[0]}" ${v === x[0] ? "selected" : ""}>${x[1]}</option>`,
+                )
+                .join("");
+          return `<div style="max-width:520px;margin:auto"><h1>${first ? "Welcome to FitForge 👋" : "Your profile"}</h1><p class="mut">${first ? "Tell us a little about you so we can personalise things. Everything stays on your device." : "Update your details any time."}</p><div class="card" style="margin-top:14px"><div class="row"><label class="fl">Name *<input id="pn" value="${esc(P.name || "")}" placeholder="Your name"></label><label class="fl">Age *<input id="pa" type="number" value="${esc(P.age || "")}" placeholder="e.g. 28"></label></div>
+ <div class="row" style="margin-top:12px"><label class="fl">Gender *<select id="pg"><option value="">Select…</option>${op(
+   [
+     ["m", "Male"],
+     ["f", "Female"],
+     ["o", "Other"],
+     ["x", "Prefer not to say"],
+   ],
+   P.gender,
+ )}</select></label><label class="fl">Goal (optional)<select id="pgl"><option value="">No goal yet</option>${op(Object.entries(GOALS), P.goal)}</select></label></div>
+ <div class="row" style="margin-top:12px"><label class="fl">Height in cm (optional)<input id="ph" type="number" value="${esc(h)}" placeholder="e.g. 170"></label><label class="fl">Weight in kg (optional)<input id="pw" type="number" step="0.1" value="${W ? W.v : ""}" placeholder="e.g. 72"></label></div>
+ <p class="mut" style="font-size:12px">Height and weight let us calculate your BMI. You can add them later.</p><button class="btn" onclick="saveP()">${first ? "Get started" : "Save profile"}</button>${first ? "" : ` <button class="btn g" onclick="go('dash')">Cancel</button>`}</div></div>`;
+        },
+
         routines() {
           const a = active(),
             cur = all().find((r) => r.id === selR) || a,
@@ -1725,8 +1883,8 @@
                 `<option value="${r.id}" ${r.id === cur.id ? "selected" : ""}>${r.id === a.id ? "★ " : ""}${esc(r.name)} · ${esc(r.level || "Custom")}${r.id === a.id ? " (Active)" : ""}</option>`,
             )
             .join("")}</select></label>
- <div class="card"><span class="tag">${esc(cur.level || "Custom")}</span> ${isA ? '<span class="tag" style="color:#6ee7a0">★ Active</span>' : ""}<h3 style="margin:8px 0 4px;font-size:19px">${esc(cur.name)}</h3><div class="mut" style="font-size:13px">${esc(cur.desc || "")}</div><div class="row" style="margin-top:12px">${isA ? "" : `<button class="btn sm" onclick="setA('${cur.id}')">Use this</button>`}<button class="btn g sm" onclick="openW('${cur.id}')">Complete chart</button>${String(cur.id).startsWith("c_") ? `<button class="btn g sm" onclick="delR('${cur.id}')">Delete</button>` : ""}</div></div>
- ${cur.single ? `<h2>Workout (every day)</h2>${dayHTML(cur, "Monday", false)}` : `<h2>Day by day</h2><div class="chips">${DAYS.map((x) => `<span class="chip ${x === sel ? "on" : ""}" onclick="selDay='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div><h3>${sel}: ${esc(cur.days[sel]?.title || "Rest")}</h3>${dayHTML(cur, sel, false)}`}`;
+ <div class="card"><span class="tag">${esc(cur.level || "Custom")}</span> ${isA ? '<span class="tag" style="color:#6ee7a0">★ Active</span>' : ""}<h3 style="margin:8px 0 4px;font-size:19px">${esc(cur.name)}</h3><div class="mut" style="font-size:13px">${esc(cur.desc || "")}</div><div class="row" style="margin-top:12px">${isA ? "" : `<button class="btn sm" onclick="setA('${cur.id}')">Use this</button>`}<button class="btn g sm" onclick="openW('${cur.id}')">Complete chart</button><button class="btn g sm" onclick="shareR('${cur.id}')">Share (JSON)</button>${String(cur.id).startsWith("c_") ? `<button class="btn g sm" onclick="delR('${cur.id}')">Delete</button>` : ""}</div></div>
+ ${ovSec()}${cur.single ? `<h2>Workout (every day)</h2>${dayHTML(cur, "Monday", false)}` : `<h2>Day by day</h2><div class="chips">${DAYS.map((x) => `<span class="chip ${x === sel ? "on" : ""}" onclick="selDay='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div><h3>${sel}: ${esc(cur.days[sel]?.title || "Rest")}</h3>${dayHTML(cur, sel, false)}`}`;
         },
         lib() {
           const gs = [
@@ -1738,51 +1896,202 @@
                 (filter === "All" || e[0] === filter) &&
                 n.toLowerCase().includes(q.toLowerCase()),
             );
-          return `<h1>Exercise library</h1><p class="mut">Browse movements with descriptions and form cues.</p><input placeholder="Search exercises…" value="${esc(q)}" oninput="q=this.value;render(1)" style="margin-top:12px"><div class="chips">${gs.map((g) => `<span class="chip ${g === filter ? "on" : ""}" onclick="filter='${g}';render()">${g}</span>`).join("")}</div>${exForm()}<div class="grid">${es.map(([n, e]) => `<div class="card" style="padding:10px">${art(e[0], e[3])}<h3 style="margin:10px 0 4px">${esc(n)}</h3><span class="tag">${e[0]}</span><p class="mut" style="font-size:13px;margin:8px 0 0">${esc(e[1])}</p>${e[2] ? `<button class="btn sm vb" data-n="${esc(n)}" onclick="openV(this.dataset.n)">▶ Watch video</button>` : ""}${S.get("fw_cx", {})[n] ? ` <button class="btn g sm vb" data-n="${esc(n)}" onclick="delX(this.dataset.n)">Remove</button>` : ""}</div>`).join("") || '<p class="mut">No exercises found.</p>'}</div>`;
+          return `<h1>Exercise library</h1><p class="mut">Browse movements with descriptions and form cues.</p><input placeholder="Search exercises…" value="${esc(q)}" oninput="q=this.value;render(1)" style="margin-top:12px"><div class="chips">${gs.map((g) => `<span class="chip ${g === filter ? "on" : ""}" onclick="filter='${g}';render()">${g}</span>`).join("")}</div>${exForm()}<div class="grid">${es.map(([n, e]) => `<div class="card" style="padding:10px">${art(e[0], e[3])}<h3 style="margin:10px 0 4px">${esc(n)}</h3><span class="tag">${e[0]}</span>${S.get("fw_cx", {})[n] ? ' <span class="tag" style="color:#ff6b35;border-color:#ff6b35">Custom</span>' : ""}<div class="mut" style="font-size:12px;margin-top:6px">Targets: ${esc(e[4] || e[0])}</div><p class="mut" style="font-size:13px;margin:8px 0 0">${esc(e[1])}</p>${e[2] ? `<button class="btn sm vb" data-n="${esc(n)}" onclick="openV(this.dataset.n)">▶ Watch video</button>` : ""}${S.get("fw_cx", {})[n] ? ` <button class="btn g sm vb" data-n="${esc(n)}" onclick="delX(this.dataset.n)">Remove</button>` : ""}</div>`).join("") || '<p class="mut">No exercises found.</p>'}</div>`;
         },
         learn() {
-          return `<h1>Learn the basics</h1><p class="mut">Muscles and gym terms explained in plain language.</p><div class="grid" style="margin-top:14px">${G.map((g) => `<div class="card" style="padding:10px">${art(g[1])}<h3 style="margin:10px 0 4px">${esc(g[0])}</h3><p class="mut" style="font-size:13px;margin:0">${esc(g[2])}</p></div>`).join("")}</div>`;
+          const cg = S.get("fw_cg", []),
+            al = [...G.map((g) => [...g, 0]), ...cg.map((g) => [...g, 1])],
+            f = al.filter((g) =>
+              (g[0] + " " + g[2]).toLowerCase().includes(gq.toLowerCase()),
+            ),
+            ex = Object.entries(allEx());
+          return `<h1>Muscle &amp; body guide</h1><p class="mut">What each muscle is, where it is, and the best exercises to train it.</p><input placeholder="Search muscles or terms…" value="${esc(gq)}" oninput="gq=this.value;render(1)" style="margin:12px 0">
+ <details class="card" style="margin-bottom:12px"><summary><b>+ Add your own</b></summary><div class="row" style="margin-top:12px"><label class="fl nm">Name<input id="gn" placeholder="e.g. Forearms"></label><label class="fl">Body part<select id="gg">${Object.keys(
+   D.groups,
+ )
+   .map((g) => `<option>${g}</option>`)
+   .join(
+     "",
+   )}</select></label></div><label class="fl" style="margin:10px 0">Description<textarea id="gd2" style="min-height:70px" placeholder="What it is and what it does"></textarea></label><button class="btn" onclick="addG()">Save</button></details>
+ <div class="grid">${
+   f
+     .map((g) => {
+       const b =
+         g[1] === "Other"
+           ? []
+           : ex
+               .filter(([n, e]) => e[0] === g[1])
+               .slice(0, 3)
+               .map((x) => x[0]);
+       return `<div class="card" style="padding:10px">${art(g[1])}<h3 style="margin:10px 0 4px">${esc(g[0])}${g[3] ? ' <span class="tag" style="color:#ff6b35;border-color:#ff6b35">Custom</span>' : ""}</h3><p class="mut" style="font-size:13px;margin:0">${esc(g[2])}</p>${b.length ? `<div class="det" style="margin-top:8px"><b style="color:var(--ac2)">Best exercises:</b> ${b.map(esc).join(", ")}</div>` : ""}${g[3] ? `<button class="btn g sm vb" data-n="${esc(g[0])}" onclick="delG(this.dataset.n)">Remove</button>` : ""}</div>`;
+     })
+     .join("") || '<p class="mut">Nothing found.</p>'
+ }</div>`;
         },
         prog() {
           const h = S.get("fw_h", 0),
-            rows = S.get("fw_logs", [])
+            all = S.get("fw_logs", [])
               .map((l, i) => [l, i])
               .filter((x) => x[0].s === "Body weight")
-              .sort((a, b) => (a[0].d < b[0].d ? 1 : -1));
-          return `<h1>Body weight</h1><p class="mut">Log your weight whenever you like and see it below.</p>
- <div class="card" style="margin:14px 0"><div class="row"><label class="fl">Height (cm)<input id="ht" type="number" placeholder="e.g. 170" value="${h || ""}"></label><button class="btn g" style="flex:0 0 auto;align-self:flex-end" onclick="saveH()">${h ? "Update" : "Save"}</button></div><div class="mut" style="font-size:12px;margin-top:8px">Used to calculate BMI: 🟡 under 18.5 · 🟢 18.5–24.9 · 🔴 25 or more</div></div>
+              .sort((a, b) => (a[0].d < b[0].d ? 1 : -1)),
+            tr = S.get("fw_tr", []);
+          return `<h1>Progress</h1><p class="mut">Track your body weight, plus anything else you care about.</p>
+ <div class="card" style="margin:14px 0"><div class="row"><label class="fl">Height (cm)<input id="ht" type="number" placeholder="e.g. 170" value="${h || ""}"></label><button class="btn g" style="flex:0 0 auto;align-self:flex-end" onclick="saveH()">${h ? "Update" : "Save"}</button></div><div class="mut" style="font-size:12px;margin-top:8px">Used to calculate BMI.</div></div>
  <div class="card"><div class="row"><label class="fl">Date<input id="ld" type="date" value="${iso()}"></label><label class="fl">Weight (kg)<input id="lv" type="number" step="0.1" placeholder="e.g. 72.5"></label><button class="btn" style="flex:0 0 auto;align-self:flex-end" onclick="addLog()">Add</button></div></div>
- <h2>Entries</h2><div class="card">${rows.length ? `<div class="eg eh"><span>Date</span><span>Weight</span><span>BMI</span><span></span></div>` + rows.map(([l, i]) => `<div class="eg"><span>${l.d}</span><b>${l.v} kg</b><span>${bpill(l.b)}</span><button class="btn g sm" onclick="delL(${i})">✕</button></div>`).join("") : '<p class="mut">No entries yet.</p>'}</div>`;
+ <h2>Body weight</h2><div class="card">${
+   all.length
+     ? `<div class="eg eh"><span>Date</span><span>Weight</span><span>BMI</span><span></span></div>` +
+       all
+         .slice(0, 10)
+         .map(
+           ([l, i]) =>
+             `<div class="eg"><span>${l.d}</span><b>${l.v} kg</b><span>${bpill(l.b)}</span><button class="btn g sm" onclick="delL(${i})">✕</button></div>`,
+         )
+         .join("")
+     : '<p class="mut">No entries yet.</p>'
+ }${all.length ? `<div class="row" style="margin-top:12px"><span class="mut" style="font-size:13px">Latest ${Math.min(10, all.length)} of ${all.length}</span><button class="btn g sm" style="flex:0 0 auto" onclick="dlW()">⬇ Download all</button></div>` : ""}</div>
+ <h2>Track anything</h2><div class="card"><p class="mut" style="margin-top:0">Waist size, steps, water, sleep… whatever matters to you.</p><div class="row"><label class="fl">What to track<input id="tn" placeholder="e.g. Waist"></label><label class="fl">Unit (optional)<input id="tu" placeholder="e.g. cm"></label><button class="btn" style="flex:0 0 auto;align-self:flex-end" onclick="addTr()">Create</button></div></div>
+ ${tr
+   .map((t) => {
+     const rs = t.rows
+       .map((r, i) => [r, i])
+       .sort((a, b) => (a[0].d < b[0].d ? 1 : -1));
+     return `<div class="card" style="margin-top:12px"><div class="row" style="align-items:center"><h3 style="flex:1 1 160px">${esc(t.name)}${t.unit ? " (" + esc(t.unit) + ")" : ""}</h3><button class="btn g sm" style="flex:0 0 auto" onclick="delTr('${t.id}')">Delete tracker</button></div><div class="row" style="margin:10px 0"><label class="fl">Date<input id="td${t.id}" type="date" value="${iso()}"></label><label class="fl">Value<input id="tv${t.id}" type="number" step="any" placeholder="e.g. 80"></label><button class="btn" style="flex:0 0 auto;align-self:flex-end" onclick="logTr('${t.id}')">Add</button></div>${
+       rs.length
+         ? `<div class="eg e3 eh"><span>Date</span><span>Value</span><span></span></div>` +
+           rs
+             .slice(0, 10)
+             .map(
+               ([r, i]) =>
+                 `<div class="eg e3"><span>${r.d}</span><b>${r.v}${t.unit ? " " + esc(t.unit) : ""}</b><button class="btn g sm" onclick="delTrRow('${t.id}',${i})">✕</button></div>`,
+             )
+             .join("") +
+           `<div class="row" style="margin-top:12px"><span class="mut" style="font-size:13px">Latest ${Math.min(10, rs.length)} of ${rs.length}</span><button class="btn g sm" style="flex:0 0 auto" onclick="dlTr('${t.id}')">⬇ Download all</button></div>`
+         : '<p class="mut">No entries yet.</p>'
+     }</div>`;
+   })
+   .join("")}`;
         },
         build() {
           const d = gd(),
-            c = S.get("fw_custom", []),
-            wm = B.mode === "week";
+            M = B.mode,
+            ed = B.edit,
+            cu = S.get("fw_custom", []),
+            cw = S.get("fw_cw", {}),
+            cs = S.get("fw_cs", {});
           const row = (k, i, x) =>
-            `<div class="brow"><span class="num">${i + 1}</span><label class="fl nm">Exercise<input list="dl2" placeholder="e.g. Lat pull-down" value="${esc(x.n)}" oninput="U('${k}',${i},'n',this.value)"></label><label class="fl">Type<select onchange="U('${k}',${i},'t',this.value);render()"><option value="s" ${x.t == "s" ? "selected" : ""}>Sets × reps</option><option value="t" ${x.t == "t" ? "selected" : ""}>Timer</option></select></label>${x.t == "s" ? `<label class="fl">Sets<input type="number" placeholder="e.g. 3" value="${esc(x.sets)}" oninput="U('${k}',${i},'sets',this.value)"></label><label class="fl">Reps<input placeholder="e.g. 8-12" value="${esc(x.reps)}" oninput="U('${k}',${i},'reps',this.value)"></label>` : `<label class="fl">Minutes<input type="number" placeholder="e.g. 5" value="${esc(x.min)}" oninput="U('${k}',${i},'min',this.value)"></label>`}<button class="btn g sm" onclick="arr('${k}').splice(${i},1);render()">✕</button></div>`;
+            `<div class="brow"><span class="num">${i + 1}</span><label class="fl nm">Exercise<input list="dl2" placeholder="e.g. Lat pull-down" value="${esc(x.n)}" oninput="U('${k}',${i},'n',this.value);nt(this)"><span class="nn" style="display:${!x.n || allEx()[x.n] ? "none" : "block"}">Not in your Exercise list. Add it in Exercises to get a picture and video.</span></label><label class="fl">Type<select onchange="U('${k}',${i},'t',this.value);render()">${[
+              ["s", "Sets × reps"],
+              ["t", "Timer"],
+              ["n", "Note"],
+            ]
+              .map(
+                (o) =>
+                  `<option value="${o[0]}" ${x.t == o[0] ? "selected" : ""}>${o[1]}</option>`,
+              )
+              .join(
+                "",
+              )}</select></label>${x.t == "s" ? `<label class="fl">Sets<input type="number" data-f="sets" placeholder="e.g. 3" value="${esc(x.sets || "")}" oninput="U('${k}',${i},'sets',this.value)" onchange="fillS('sets',this.value)"></label><label class="fl">Reps<input data-f="reps" placeholder="e.g. 8-12" value="${esc(x.reps || "")}" oninput="U('${k}',${i},'reps',this.value)" onchange="fillS('reps',this.value)"></label>` : x.t == "t" ? `<label class="fl">Minutes<input type="number" placeholder="e.g. 5" value="${esc(x.min || "")}" oninput="U('${k}',${i},'min',this.value)"></label>` : `<label class="fl">Details<input placeholder="e.g. 10 each side" value="${esc(x.raw || "")}" oninput="U('${k}',${i},'raw',this.value)"></label>`}<button class="btn g xb" onclick="arr('${k}').splice(${i},1);render()">✕</button></div>`;
           const list = (k) =>
             arr(k)
               .map((x, i) => row(k, i, x))
               .join("") +
-            `<button class="btn g sm" onclick="addI('${k}')">+ Add exercise</button>`;
+            `<div class="row" style="margin-top:4px"><button class="btn g sm" style="flex:0 0 auto" onclick="addI('${k}')">+ Add exercise</button>${k === "w" || k === "s" ? `<button class="btn g sm" style="flex:0 0 auto" onclick="saveRe('${k}')">Save for reuse</button>` : ""}</div>`;
+          const pick = (k, PRE, CU, l) =>
+            `<select class="pk" onchange="addPre('${k}',this.value);this.value=''"><option value="">+ ${l}…</option><optgroup label="Ready-made">${Object.keys(
+              PRE,
+            )
+              .map((n) => `<option value="p:${esc(n)}">${esc(n)}</option>`)
+              .join("")}</optgroup>${
+              Object.keys(CU).length
+                ? `<optgroup label="My saved">${Object.keys(CU)
+                    .map(
+                      (n) => `<option value="c:${esc(n)}">${esc(n)}</option>`,
+                    )
+                    .join("")}</optgroup>`
+                : ""
+            }</select>`;
           const bh = (t, sub, c) =>
             `<div class="bh" style="--c:${c}">${t}<small>${sub}</small></div>`;
-          return `<h1>Routine builder</h1><p class="mut">Build a full week plan, or just one workout.</p>
- <div class="chips"><span class="chip ${wm ? "on" : ""}" onclick="setMode('week')">📅 Full week routine</span><span class="chip ${wm ? "" : "on"}" onclick="setMode('single')">💪 Single workout</span></div>
- <div class="card"><div class="row"><label class="fl">${wm ? "Routine name" : "Workout name"}<input placeholder="${wm ? "e.g. My 6-day split" : "e.g. Back & Biceps"}" value="${esc(B.name)}" oninput="B.name=this.value"></label><label class="fl">Description (optional)<input placeholder="A short note" value="${esc(B.desc)}" oninput="B.desc=this.value"></label></div></div>
- ${wm ? `<div class="chips">${DAYS.map((x) => `<span class="chip ${x === B.day ? "on" : ""}" onclick="B.day='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div>` : ""}
- <div class="card"><h3>${wm ? B.day : "Your workout"}</h3>${wm ? `<div class="row" style="margin:10px 0"><label class="fl">Day title<input placeholder="e.g. Back & Biceps" value="${esc(d.title)}" oninput="gd().title=this.value"></label><label class="mut" style="flex:0 0 auto"><input type="checkbox" style="width:auto" ${d.rest ? "checked" : ""} onchange="gd().rest=this.checked;render()"> Rest day</label></div>` : ""}
- ${d.rest ? '<p class="mut">Enjoy your rest 😴</p>' : bh("PART 1 · WARM-UP", "Optional. Leave empty and a friendly reminder is shown.", "#ff6b35") + list("w") + bh("PART 2 · WORKOUT", "Add one block per muscle group, e.g. Back, then Biceps.", "#3b82f6") + d.main.map((m, i) => `<div class="card" style="background:var(--card2);margin-bottom:12px"><label class="fl">Block title<input placeholder="e.g. Back" value="${esc(m.n)}" oninput="gd().main[${i}].n=this.value"></label><div style="height:10px"></div>${list(String(i))}${d.main.length > 1 ? ` <button class="btn g sm" onclick="gd().main.splice(${i},1);render()">Remove block</button>` : ""}</div>`).join("") + '<button class="btn g" onclick="addM()">+ Add another muscle group</button>' + bh("PART 3 · STRETCHING", "Optional. Leave empty and a reminder is shown.", "#22c55e") + list("s")}</div>
+          const wp =
+              bh(
+                "WARM-UP",
+                "Optional. Leave empty and a friendly reminder is shown.",
+                "#ff6b35",
+              ) +
+              pick("w", WU, cw, "Add a ready-made warm-up") +
+              list("w"),
+            sp =
+              bh(
+                "STRETCHING",
+                "Optional. Leave empty and a reminder is shown.",
+                "#22c55e",
+              ) +
+              pick("s", ST, cs, "Add a ready-made stretch") +
+              list("s"),
+            mp =
+              bh(
+                "WORKOUT",
+                "Add one block per muscle group, e.g. Back, then Biceps.",
+                "#3b82f6",
+              ) +
+              d.main
+                .map(
+                  (m, i) =>
+                    `<div class="card" style="background:var(--card2);margin-bottom:12px"><label class="fl">Block title<input placeholder="e.g. Back" value="${esc(m.n)}" oninput="gd().main[${i}].n=this.value"></label><div style="height:10px"></div>${list(String(i))}${d.main.length > 1 ? ` <button class="btn g sm" onclick="gd().main.splice(${i},1);render()">Remove block</button>` : ""}</div>`,
+                )
+                .join("") +
+              '<button class="btn g" onclick="addM()">+ Add another muscle group</button>';
+          const nm = {
+              week: "Routine name",
+              workout: "Workout name",
+              warmup: "Warm-up name",
+              stretch: "Stretch name",
+            }[M],
+            days = DAYS.filter(
+              (x) => x !== B.day && B.days[x] && !B.days[x].rest,
+            );
+          return `<h1>Routine builder</h1><p class="mut">Create a full week, a single workout, a warm-up or a stretch routine.</p>
+ <div class="chips">${[
+   ["week", "📅 Full week"],
+   ["workout", "💪 Single workout"],
+   ["warmup", "🔥 Warm-up"],
+   ["stretch", "🧘 Stretch"],
+ ]
+   .map(
+     (o) =>
+       `<span class="chip ${M === o[0] ? "on" : ""}" onclick="setMode('${o[0]}')">${o[1]}</span>`,
+   )
+   .join("")}</div>
+ <label class="fl" style="margin-bottom:10px">Edit something you saved<select onchange="loadE(this.value)"><option value="">${ed ? "Editing: " + esc(B.name) : "Choose to edit…"}</option>${cu.length ? `<optgroup label="Routines &amp; workouts">${cu.map((r) => `<option value="r:${r.id}">${esc(r.name)} · ${r.single ? "Workout" : "Routine"}</option>`).join("")}</optgroup>` : ""}${
+   Object.keys(cw).length
+     ? `<optgroup label="Warm-ups">${Object.keys(cw)
+         .map((n) => `<option value="w:${esc(n)}">${esc(n)}</option>`)
+         .join("")}</optgroup>`
+     : ""
+ }${
+   Object.keys(cs).length
+     ? `<optgroup label="Stretches">${Object.keys(cs)
+         .map((n) => `<option value="s:${esc(n)}">${esc(n)}</option>`)
+         .join("")}</optgroup>`
+     : ""
+ }</select></label>
+ <div class="card"><div class="row"><label class="fl">${nm}<input placeholder="Give it a name" value="${esc(B.name)}" oninput="B.name=this.value"></label>${M === "warmup" || M === "stretch" ? "" : `<label class="fl">Description (optional)<input placeholder="A short note" value="${esc(B.desc)}" oninput="B.desc=this.value"></label>`}</div></div>
+ ${M === "week" ? `<div class="chips">${DAYS.map((x) => `<span class="chip ${x === B.day ? "on" : ""}" onclick="B.day='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div>` : ""}
+ <div class="card"><h3>${M === "week" ? B.day : M === "workout" ? "Your workout" : M === "warmup" ? "Your warm-up" : "Your stretch"}</h3>${M === "week" ? `<div class="row" style="margin:10px 0"><label class="fl">Day title<input placeholder="e.g. Back &amp; Biceps" value="${esc(d.title)}" oninput="gd().title=this.value"></label><label class="mut" style="flex:0 0 auto"><input type="checkbox" style="width:auto" ${d.rest ? "checked" : ""} onchange="gd().rest=this.checked;render()"> Rest day</label></div>${days.length && !d.rest ? `<select class="pk" onchange="copyDay(this.value)"><option value="">Copy another day into this one…</option>${days.map((x) => `<option>${x}</option>`).join("")}</select>` : ""}` : ""}
+ ${d.rest ? '<p class="mut">Enjoy your rest 😴</p>' : M === "warmup" ? wp : M === "stretch" ? sp : wp + mp + sp}</div>
  <datalist id="dl2">${Object.keys(allEx())
    .map((n) => `<option value="${esc(n)}">`)
    .join(
      "",
-   )}</datalist><p class="mut" style="font-size:13px">${wm ? "Days you leave empty are saved as rest days." : "A single workout can be done on any day."}</p><button class="btn" onclick="saveR()">Save ${wm ? "routine" : "workout"}</button>
- <h2>Your saved routines & workouts (${c.length})</h2><div class="grid">${c.map((r) => `<div class="card"><span class="tag">${esc(r.level || "Custom")}</span><h3 style="margin-top:8px">${esc(r.name)}</h3><p class="mut" style="font-size:13px">${esc(r.desc || "")}</p><div class="row"><button class="btn sm" onclick="setA('${r.id}')">Use</button><button class="btn g sm" onclick="delR('${r.id}')">Delete</button></div></div>`).join("") || '<p class="mut">None yet.</p>'}</div>
- <h2>JSON import / export</h2><div class="card"><textarea id="js" style="min-height:130px">${esc(JSON.stringify(c, null, 1))}</textarea><div class="row" style="margin-top:10px"><button class="btn g" onclick="impJ()">Import JSON</button></div></div>`;
+   )}</datalist><p class="mut" style="font-size:13px">${M === "week" ? "Days you leave empty are saved as rest days." : ""}</p>
+ <div class="row">${ed ? `<button class="btn" onclick="saveR(0)">Update</button><button class="btn g" onclick="saveR(1)">Save as new</button><button class="btn g" onclick="delE()">Delete</button><button class="btn g" onclick="resetB()">Start fresh</button>` : `<button class="btn" onclick="saveR(1)">Save</button>`}</div>
+ <details class="card" style="margin-top:22px"><summary class="mut">Import a shared routine (JSON)</summary><input type="file" accept=".json,application/json" style="margin:10px 0" onchange="impJF(this.files[0])"><textarea id="js" placeholder="…or paste JSON here"></textarea><button class="btn g" style="margin-top:8px" onclick="impJ()">Import</button></details>`;
         },
       };
       function render(keep) {
+        if (!S.get("fw_prof", null)) view = "onb";
+        $("nav").style.display = S.get("fw_prof", null) ? "" : "none";
         const f =
           keep &&
           document.activeElement &&
@@ -1840,7 +2149,15 @@
         S.set("fw_logs", l);
         render();
       }
-      let B = { name: "", desc: "", day: "Monday", mode: "week", days: {} };
+      let B = {
+        name: "",
+        desc: "",
+        day: "Monday",
+        mode: "week",
+        days: {},
+        edit: null,
+        last: { sets: "", reps: "" },
+      };
       const gd = () =>
         B.days[B.day] ||
         (B.days[B.day] = {
@@ -1856,7 +2173,13 @@
           arr(k)[i][f] = v;
         },
         addI = (k) => {
-          arr(k).push({ n: "", t: "s", sets: "", reps: "", min: "" });
+          arr(k).push({
+            n: "",
+            t: "s",
+            sets: B.last.sets,
+            reps: B.last.reps,
+            min: "",
+          });
           render();
         },
         addM = () => {
@@ -1866,46 +2189,204 @@
         setMode = (m) => {
           B.mode = m;
           B.day = "Monday";
+          B.edit = null;
           render();
         };
-      function saveR() {
+      const cvt = (a) =>
+        a
+          .filter((x) => x.n.trim())
+          .map((x) => {
+            const n = x.n.trim();
+            if (x.t === "n") return n + "|" + (x.raw || "");
+            if (x.t === "t") return n + "|" + (x.min ? x.min + " min" : "");
+            return (
+              n +
+              "|" +
+              (x.sets && x.reps
+                ? x.sets + "x" + x.reps
+                : x.sets
+                  ? x.sets + " sets"
+                  : x.reps
+                    ? x.reps + " reps"
+                    : "")
+            );
+          });
+      const rev = (it) => {
+        const [n, d = ""] = it.split("|");
+        let m;
+        if ((m = d.match(/^(\d+)\s*x\s*(.+)$/i)))
+          return { n, t: "s", sets: m[1], reps: m[2], min: "" };
+        if ((m = d.match(/^(\d+(?:\.\d+)?)\s*min$/i)))
+          return { n, t: "t", min: m[1], sets: "", reps: "" };
+        if ((m = d.match(/^(\d+)\s*sets?$/i)))
+          return { n, t: "s", sets: m[1], reps: "", min: "" };
+        if (!d) return { n, t: "s", sets: "", reps: "", min: "" };
+        return { n, t: "n", raw: d, sets: "", reps: "", min: "" };
+      };
+      const fromDay = (d) => {
+        const o = {
+          title: d.title || "",
+          rest: !!d.rest,
+          warm: [],
+          main: [],
+          stretch: [],
+        };
+        (d.sections || []).forEach((s) => {
+          const it = s.items.map(rev);
+          if (s.kind === "warm") o.warm = it;
+          else if (s.kind === "stretch") o.stretch = it;
+          else o.main.push({ n: s.n, items: it });
+        });
+        if (!o.main.length) o.main.push({ n: "", items: [] });
+        return o;
+      };
+      function nt(el) {
+        el.parentNode.querySelector(".nn").style.display =
+          !el.value.trim() || allEx()[el.value] ? "none" : "block";
+      }
+      function fillS(f, v) {
+        if (!v) return;
+        B.last[f] = v;
+        document
+          .querySelectorAll('#app input[data-f="' + f + '"]')
+          .forEach((i) => {
+            if (!i.value) {
+              i.value = v;
+              i.dispatchEvent(new Event("input"));
+            }
+          });
+      }
+      function addPre(k, v) {
+        if (!v) return;
+        const t = v[0],
+          n = v.slice(2),
+          src =
+            t === "p"
+              ? (k === "w" ? WU : ST)[n]
+              : S.get(k === "w" ? "fw_cw" : "fw_cs", {})[n];
+        if (src) {
+          arr(k).push(...src.map(rev));
+          render();
+        }
+      }
+      function saveRe(k) {
+        const it = cvt(arr(k));
+        if (!it.length) {
+          alert("Add at least one exercise first.");
+          return;
+        }
+        const n = prompt("Name this list (e.g. Push-day warm-up)");
+        if (!n || !n.trim()) return;
+        const key = k === "w" ? "fw_cw" : "fw_cs",
+          c = S.get(key, {});
+        c[n.trim()] = it;
+        S.set(key, c);
+        alert("Saved! It now appears in the ready-made list.");
+        render();
+      }
+      function copyDay(x) {
+        if (!x) return;
+        B.days[B.day] = JSON.parse(JSON.stringify(B.days[x]));
+        render();
+      }
+      function resetB() {
+        B = {
+          name: "",
+          desc: "",
+          day: "Monday",
+          mode: B.mode,
+          days: {},
+          edit: null,
+          last: { sets: "", reps: "" },
+        };
+        render();
+      }
+      function loadE(v) {
+        if (!v) return;
+        const t = v[0],
+          id = v.slice(2);
+        B = {
+          name: "",
+          desc: "",
+          day: "Monday",
+          mode: "week",
+          days: {},
+          edit: { t, id },
+          last: { sets: "", reps: "" },
+        };
+        if (t === "r") {
+          const r = S.get("fw_custom", []).find((x) => x.id === id);
+          if (!r) return;
+          B.name = r.name;
+          B.desc = r.desc || "";
+          if (r.single) {
+            B.mode = "workout";
+            B.days.Monday = fromDay(r.days.Monday);
+          } else DAYS.forEach((x) => (B.days[x] = fromDay(r.days[x])));
+        } else {
+          const it = S.get(t === "w" ? "fw_cw" : "fw_cs", {})[id];
+          if (!it) return;
+          B.mode = t === "w" ? "warmup" : "stretch";
+          B.name = id;
+          const o = fromDay({});
+          o[t === "w" ? "warm" : "stretch"] = it.map(rev);
+          B.days.Monday = o;
+        }
+        render();
+      }
+      function delE() {
+        if (!B.edit || !confirm("Delete this permanently?")) return;
+        const { t, id } = B.edit;
+        if (t === "r")
+          S.set(
+            "fw_custom",
+            S.get("fw_custom", []).filter((x) => x.id !== id),
+          );
+        else {
+          const k = t === "w" ? "fw_cw" : "fw_cs",
+            c = S.get(k, {});
+          delete c[id];
+          S.set(k, c);
+        }
+        resetB();
+      }
+      function saveR(asNew) {
         const name = B.name.trim(),
-          wm = B.mode === "week";
+          M = B.mode,
+          e = asNew ? null : B.edit;
         if (!name) {
           alert("Please give it a name.");
           return;
         }
-        const cv = (a) =>
-            a
-              .filter((x) => x.n.trim())
-              .map((x) => {
-                const n = x.n.trim();
-                if (x.t === "t") return n + "|" + (x.min ? x.min + " min" : "");
-                return (
-                  n +
-                  "|" +
-                  (x.sets && x.reps
-                    ? x.sets + "x" + x.reps
-                    : x.sets
-                      ? x.sets + " sets"
-                      : x.reps
-                        ? x.reps + " reps"
-                        : "")
-                );
-              }),
+        if (M === "warmup" || M === "stretch") {
+          const k = M === "warmup" ? "fw_cw" : "fw_cs",
+            it = cvt(arr(M === "warmup" ? "w" : "s"));
+          if (!it.length) {
+            alert("Add at least one exercise.");
+            return;
+          }
+          const c = S.get(k, {});
+          if (e && e.id !== name) delete c[e.id];
+          c[name] = it;
+          S.set(k, c);
+          alert("Saved!");
+          resetB();
+          return;
+        }
+        const wm = M === "week",
           mk = (d) => {
             const sc = [];
-            if (cv(d.warm).length)
-              sc.push({ n: "Warm-up", kind: "warm", items: cv(d.warm) });
+            if (cvt(d.warm).length)
+              sc.push({ n: "Warm-up", kind: "warm", items: cvt(d.warm) });
             d.main.forEach((m) => {
-              const it = cv(m.items);
+              const it = cvt(m.items);
               if (it.length) sc.push({ n: m.n.trim() || "Workout", items: it });
             });
-            if (cv(d.stretch).length)
+            if (cvt(d.stretch).length)
               sc.push({
                 n: "Stretching",
                 kind: "stretch",
-                items: cv(d.stretch),
+                items: cvt(d.stretch),
               });
             return sc;
           },
@@ -1924,39 +2405,52 @@
             alert("Add at least one exercise.");
             return;
           }
-          DAYS.forEach((x) => (days[x] = { title: name, sections: sc }));
+          DAYS.forEach(
+            (x) =>
+              (days[x] = {
+                title: name,
+                sections: JSON.parse(JSON.stringify(sc)),
+              }),
+          );
         }
-        const c = S.get("fw_custom", []);
-        c.push({
-          id: "c_" + Date.now(),
+        let c = S.get("fw_custom", []);
+        const o = {
+          id: e && e.t === "r" ? e.id : "c_" + Date.now(),
           name,
           level: wm ? "Custom" : "Single workout",
           single: !wm,
           desc: B.desc,
           days,
-        });
+        };
+        if (e && e.t === "r") c = c.map((x) => (x.id === e.id ? o : x));
+        else c.push(o);
         S.set("fw_custom", c);
-        B = { name: "", desc: "", day: "Monday", mode: B.mode, days: {} };
-        alert("Saved! Find it below or on the Routines page.");
-        render();
+        alert(e ? "Updated!" : "Saved! Find it on the Routines page.");
+        resetB();
       }
       function impJ() {
         try {
           const a = JSON.parse($("js").value);
           if (!Array.isArray(a)) throw 0;
-          S.set(
-            "fw_custom",
-            a.map((r, i) => ({
-              ...r,
-              id: String(r.id || "").startsWith("c_")
-                ? r.id
-                : "c_" + Date.now() + i,
-            })),
-          );
+          const c = S.get("fw_custom", []);
+          S.set("fw_custom", [
+            ...c,
+            ...a.map((r, i) => ({ ...r, id: "c_" + Date.now() + i })),
+          ]);
+          alert("Imported! Find it on the Routines page.");
           render();
         } catch (e) {
-          alert("Invalid JSON: expected an array of routines.");
+          alert("Invalid JSON: expected a routine file.");
         }
+      }
+      function impJF(f) {
+        if (!f) return;
+        const r = new FileReader();
+        r.onload = () => {
+          $("js").value = r.result;
+          impJ();
+        };
+        r.readAsText(f);
       }
       function openV(n) {
         const u = (info(n)[2] || "").trim();
@@ -2129,7 +2623,7 @@
           .map((g) => `<option>${g}</option>`)
           .join(
             "",
-          )}</select></label></div><label class="fl" style="margin-top:10px">Description<textarea id="xd" style="min-height:70px" placeholder="How to perform it"></textarea></label><div class="row" style="margin:10px 0"><label class="fl">Thumbnail (optional)<input id="xf" type="file" accept="image/*"></label><label class="fl">Video link (optional)<input id="xv" placeholder="YouTube, Vimeo or .mp4 link"></label></div><p class="mut" style="font-size:12px">No thumbnail? A picture is chosen from the muscle group.</p><button class="btn" onclick="addEx()">Save exercise</button></details>`;
+          )}</select></label></div><label class="fl" style="margin-top:10px">Muscles worked (optional)<input id="xm" placeholder="e.g. Quads, glutes"></label><label class="fl" style="margin-top:10px">Description<textarea id="xd" style="min-height:70px" placeholder="How to perform it"></textarea></label><div class="row" style="margin:10px 0"><label class="fl">Thumbnail (optional)<input id="xf" type="file" accept="image/*"></label><label class="fl">Video link (optional)<input id="xv" placeholder="YouTube, Vimeo or .mp4 link"></label></div><p class="mut" style="font-size:12px">No thumbnail? A picture is chosen from the muscle group.</p><button class="btn" onclick="addEx()">Save exercise</button></details>`;
       function addEx() {
         const n = $("xn").value.trim();
         if (!n) {
@@ -2144,6 +2638,7 @@
               $("xd").value.trim() || "Custom exercise.",
               $("xv").value.trim(),
               th || "",
+              $("xm").value.trim(),
             ];
             S.set("fw_cx", c);
             render();
@@ -2248,8 +2743,13 @@
             } else if (k === "fw_wl" && cur) {
               nv = { ...v };
               for (const dd in cur) nv[dd] = { ...(v[dd] || {}), ...cur[dd] };
-            } else if (k === "fw_cx" && cur) nv = { ...v, ...cur };
-            else if (k.startsWith("fw_done_") && Array.isArray(cur))
+            } else if ((k === "fw_cx" || k === "fw_cw" || k === "fw_cs") && cur)
+              nv = { ...v, ...cur };
+            else if ((k === "fw_tr" || k === "fw_cg") && Array.isArray(cur)) {
+              const m = {};
+              [...v, ...cur].forEach((x) => (m[x.id || x[0]] = x));
+              nv = Object.values(m);
+            } else if (k.startsWith("fw_done_") && Array.isArray(cur))
               nv = [...new Set([...v, ...cur])];
             else if (cur !== null && typeof v !== "object") nv = cur;
             S.set(k, nv);
@@ -2259,6 +2759,458 @@
         } catch (e) {
           alert("That does not look like a FitForge backup file.");
         }
+      }
+      const GOALS = {
+        lose: "Lose weight",
+        gain: "Gain muscle / weight",
+        fit: "Stay fit",
+        strength: "Build strength",
+        endurance: "Improve endurance",
+        flex: "Flexibility & mobility",
+      };
+      const TIPS = {
+        gen: [
+          "Fitness is roughly 70% nutrition. Training builds your body, but what you eat decides how it looks and feels.",
+          "Protein at every meal keeps you full and helps muscles recover. Eggs, dal, paneer, curd, chicken and sprouts all count.",
+          "Drink water through the day. Thirst is often mistaken for hunger.",
+          "Sleep 7–9 hours. Poor sleep raises hunger and slows recovery.",
+          "Eat mostly whole foods: vegetables, fruit, pulses and whole grains. Treat sweets as occasional, not forbidden.",
+          "You can’t out-train a bad diet. Eat slowly and stop when comfortably full.",
+        ],
+        lose: [
+          "Weight loss comes mostly from a small daily calorie deficit. Walk more, and keep portions sensible.",
+          "Fill half your plate with vegetables. You stay full for fewer calories.",
+          "Liquid calories add up fast. Swap sugary drinks for water or unsweetened tea.",
+        ],
+        gain: [
+          "To build muscle you must eat enough. Add a protein source and a healthy carb to every meal.",
+          "Progressive overload matters: add a little weight or a rep each week.",
+          "Sleep is when muscle is built. Protect your 7–9 hours.",
+        ],
+        fit: [
+          "Consistency beats intensity. Three or four regular sessions a week beat one heroic workout.",
+          "Mix strength, cardio and stretching across the week for a balanced body.",
+          "Eat a balanced plate: protein, vegetables, and some healthy carbs and fats.",
+        ],
+        strength: [
+          "Focus on compound lifts like squats, deadlifts, presses and rows, and rest 2–3 minutes between heavy sets.",
+          "Eat enough protein and don’t cut calories too far while building strength.",
+          "Good form first. Add weight only when your technique is solid.",
+        ],
+        endurance: [
+          "Build your weekly distance gradually, about 10% at a time.",
+          "Carbs fuel endurance. Eat a light carb snack before long sessions.",
+          "Hydrate before, during and after long efforts.",
+        ],
+        flex: [
+          "Stretch warm muscles. Spend 5–10 minutes after your workout holding each stretch about 30 seconds.",
+          "Breathe slowly in stretches and never bounce.",
+          "Daily short sessions beat one long weekly one.",
+        ],
+      };
+      const tipCard = () => {
+        const P = S.get("fw_prof", {}),
+          L = TIPS[P.goal] || TIPS.gen,
+          i = (Math.floor(Date.now() / 864e5) + tipN) % L.length;
+        return `<div class="card tip" style="margin-top:14px"><span class="tag">💡 Tip${P.goal ? " · " + GOALS[P.goal] : ""}</span><p style="margin:10px 0">${esc(L[i])}</p><button class="btn g sm" onclick="tipN++;render()">Next tip</button></div>`;
+      };
+      const noR = () => !S.get("fw_active", null);
+      function effR() {
+        const r = active(),
+          o = S.get("fw_ov", {})[iso()];
+        return o ? { ...r, days: { ...r.days, [todayName()]: o } } : r;
+      }
+      function weekSec(r) {
+        const n = new Date(),
+          ix = (n.getDay() + 6) % 7,
+          x = wkSel || todayName(),
+          d = r.days[x] || {},
+          dt = iso(
+            new Date(
+              n.getFullYear(),
+              n.getMonth(),
+              n.getDate() - ix + DAYS.indexOf(x),
+            ),
+          );
+        return `<h2>This week</h2><div class="week">${wk(r)}</div><div class="mut" style="font-size:12px;margin-top:8px">🟢 worked out · 🔴 missed · 😴 rest day · tap a day for details</div><div class="card" style="margin-top:10px"><div class="mut" style="font-size:12px">${x} · ${dt.slice(5)}</div><div class="row" style="margin-top:4px;align-items:center"><b style="flex:2 1 160px;font-size:16px">${esc(d.title || "Rest")} ${d.rest ? "😴" : ""}${dayDone(dt) ? ' <span class="tag" style="color:#6ee7a0">Completed</span>' : ""}</b>${d.rest ? "" : `<button class="btn g sm" onclick="openDay('${x}')">View workout</button>`}</div></div>`;
+      }
+      function showM(t, h) {
+        $("mt2").textContent = t;
+        $("mw").innerHTML = h;
+        $("modal2").classList.add("on");
+        lock();
+      }
+      function openDay(x) {
+        const r = effR();
+        showM(
+          x + " · " + ((r.days[x] || {}).title || ""),
+          dayHTML(r, x, false),
+        );
+      }
+      async function saveFile(name, text) {
+        let dl = null;
+        try {
+          dl = window.claude && (await claude.use("downloads"));
+        } catch (e) {}
+        const fb = () =>
+          showM(
+            "Copy this data",
+            '<p class="mut">Direct download isn’t available here. Copy the text below and save it in a file.</p><textarea readonly style="min-height:240px">' +
+              esc(text) +
+              "</textarea>",
+          );
+        if (!dl) {
+          fb();
+          return;
+        }
+        try {
+          await dl.save({ filename: name, data: text });
+        } catch (e) {
+          if (!e || e.code !== "declined") fb();
+        }
+      }
+      const fname = (n) => (n || "workout").replace(/[^\w]+/g, "-") + ".json";
+      function shareR(id) {
+        const r = all().find((x) => x.id === id);
+        if (r) saveFile(fname(r.name), JSON.stringify([r], null, 1));
+      }
+      function shareToday() {
+        const d = effR().days[todayName()],
+          days = {};
+        DAYS.forEach((x) => (days[x] = d));
+        saveFile(
+          fname(d.title),
+          JSON.stringify(
+            [
+              {
+                id: "c_share",
+                name: d.title,
+                level: "Single workout",
+                single: true,
+                desc: "",
+                days,
+              },
+            ],
+            null,
+            1,
+          ),
+        );
+      }
+      const PW = [
+        [
+          "Chest & Triceps",
+          [
+            [
+              "Chest",
+              [
+                "Bench press|4x8-10",
+                "Incline dumbbell press|3x10-12",
+                "Cable fly|3x12-15",
+              ],
+            ],
+            [
+              "Triceps",
+              ["Tricep pushdown|3x10-12", "Overhead tricep extension|3x10-12"],
+            ],
+          ],
+        ],
+        [
+          "Back & Biceps",
+          [
+            [
+              "Back",
+              [
+                "Lat pull-down|3x8-12",
+                "Seated cable row|3x8-12",
+                "Straight arm pull-down|3x10-15",
+              ],
+            ],
+            ["Biceps", ["Dumbbell curl|3x10-12", "Hammer curl|3x10-12"]],
+          ],
+        ],
+        [
+          "Shoulders",
+          [
+            [
+              "Shoulders",
+              [
+                "Shoulder press|4x8-10",
+                "Lateral raise|3x12-15",
+                "Reverse pec deck|3x12-15",
+              ],
+            ],
+          ],
+        ],
+        [
+          "Legs",
+          [
+            [
+              "Legs",
+              [
+                "Squat|4x8-10",
+                "Leg press|3x10-12",
+                "Romanian deadlift|3x8-10",
+                "Leg curl|3x12",
+                "Calf raise|4x15",
+              ],
+            ],
+          ],
+        ],
+        [
+          "Upper Body",
+          [
+            [
+              "Main",
+              [
+                "Pull-ups|3xmax",
+                "Bench press|3x8-10",
+                "Shoulder press|3x10",
+                "Dumbbell curl|3x12",
+                "Tricep pushdown|3x12",
+              ],
+            ],
+          ],
+        ],
+        [
+          "Lower Body",
+          [
+            [
+              "Main",
+              [
+                "Deadlift|4x6-8",
+                "Lunges|3x12/leg",
+                "Leg curl|3x12",
+                "Calf raise|3x15",
+              ],
+            ],
+          ],
+        ],
+        [
+          "Core & Abs",
+          [
+            [
+              "Core",
+              [
+                "Plank|3x45 s",
+                "Crunches|3x15",
+                "Leg raises|3x12",
+                "Russian twist|3x20",
+              ],
+            ],
+          ],
+        ],
+        [
+          "Full Body (Beginner)",
+          [
+            [
+              "Main",
+              [
+                "Leg press|3x12",
+                "Push-ups|3x8-10",
+                "Lat pull-down|3x10-12",
+                "Plank|3x30 s",
+              ],
+            ],
+          ],
+        ],
+        ["Cardio 30 min", [["Cardio", ["Cardio|30 min"]]]],
+      ];
+      const WU = {
+        "Upper body (5 min)": [
+          "Treadmill|2 min",
+          "Arm circles|10 fwd, 10 back",
+          "Shoulder rolls|10 fwd, 10 back",
+          "Cat cow|8",
+          "Scapular push-ups|8-10",
+        ],
+        "Lower body (5 min)": [
+          "Treadmill|3 min",
+          "Leg swings|10 each leg",
+          "Hip circles|10 each way",
+          "Bodyweight squats|10",
+          "Walking lunges|8 each leg",
+        ],
+        "Full body (6 min)": [
+          "Treadmill|3 min",
+          "Arm circles|10 fwd, 10 back",
+          "Cat cow|8",
+          "World's Greatest Stretch|4 each side",
+          "Bodyweight squats|10",
+        ],
+      };
+      const ST = {
+        "Upper body": [
+          "Childs pose|30 s",
+          "Lat stretch|30 s",
+          "Cross body shoulder stretch|30 s each",
+          "Chest stretch|30 s",
+          "Triceps stretch|30 s each",
+        ],
+        "Lower body": [
+          "Seated hamstring stretch|30 s each",
+          "Hip flexor stretch|30 s each",
+          "Quad stretch|30 s each",
+          "Calf stretch|30 s each",
+          "Glute stretch|30 s each",
+        ],
+        "Full body": [
+          "Childs pose|30 s",
+          "Cross body shoulder stretch|30 s each",
+          "Seated hamstring stretch|30 s each",
+          "Hip flexor stretch|30 s each",
+          "Gentle spinal rotation|8 each side",
+        ],
+      };
+      const ovObj = (v) => {
+        const t = v[0],
+          id = v.slice(2);
+        if (t === "p") {
+          const w = PW[+id];
+          return {
+            title: w[0],
+            sections: w[1].map(([n, items]) => ({ n, items: [...items] })),
+          };
+        }
+        const r = S.get("fw_custom", []).find((x) => x.id === id);
+        return r ? JSON.parse(JSON.stringify(r.days.Monday)) : null;
+      };
+      function ovSec() {
+        const ov = S.get("fw_ov", {})[iso()],
+          cs = S.get("fw_custom", []).filter((r) => r.single);
+        return `<h2>Doing something different today?</h2><div class="card"><p class="mut" style="margin-top:0">Pick a workout or log your own for today. Your routine continues as normal tomorrow.${ov ? ` <b style="color:var(--ac2)">Today is currently: ${esc(ov.title)}</b>` : ""}</p><label class="fl">Choose a workout<select id="ovs"><option value="">Select…</option><optgroup label="Ready-made">${PW.map((w, i) => `<option value="p:${i}">${esc(w[0])}</option>`).join("")}</optgroup>${cs.length ? `<optgroup label="My workouts">${cs.map((r) => `<option value="c:${r.id}">${esc(r.name)}</option>`).join("")}</optgroup>` : ""}</select></label><div class="row" style="margin-top:10px"><button class="btn" onclick="setOv()">Use for today</button><button class="btn g" onclick="viewW()">Preview</button>${ov ? `<button class="btn g" onclick="resetOv()">Back to my routine</button>` : ""}</div><div class="sec">Or just log what you did</div><textarea id="ovt" placeholder="e.g. 5 km run and 20 min abs"></textarea><button class="btn g" style="margin-top:8px" onclick="saveNote()">Save as today’s workout</button></div>`;
+      }
+      function setOv() {
+        const v = $("ovs").value;
+        if (!v) return;
+        const o = ovObj(v);
+        if (!o) return;
+        S.set("fw_ov", { [iso()]: o });
+        go("today");
+      }
+      function viewW() {
+        const v = $("ovs").value;
+        if (!v) return;
+        const o = ovObj(v);
+        if (o) showM(o.title, dayHTML({ days: { X: o } }, "X", false));
+      }
+      function resetOv() {
+        S.set("fw_ov", {});
+        render();
+      }
+      function saveNote() {
+        const t = $("ovt").value.trim();
+        if (!t) return;
+        S.set("fw_ov", {
+          [iso()]: { title: "Custom workout", note: t, sections: [] },
+        });
+        const k = doneKey(),
+          d = S.get(k, []);
+        if (!d.includes("note|custom")) S.set(k, [...d, "note|custom"]);
+        go("today");
+      }
+      function saveP() {
+        const name = $("pn").value.trim(),
+          age = parseInt($("pa").value),
+          g = $("pg").value,
+          h = parseFloat($("ph").value),
+          w = parseFloat($("pw").value);
+        if (!name || !(age >= 5 && age <= 110) || !g) {
+          alert("Please fill in your name, age and gender.");
+          return;
+        }
+        S.set("fw_prof", { name, age, gender: g, goal: $("pgl").value });
+        if (h > 50 && h < 260) S.set("fw_h", h);
+        if (w > 0) {
+          const hh = S.get("fw_h", 0),
+            e = { d: iso(), s: "Body weight", v: w };
+          if (hh) e.b = +(w / (hh / 100) ** 2).toFixed(1);
+          S.set("fw_logs", [
+            ...S.get("fw_logs", []).filter(
+              (x) => !(x.d === e.d && x.s === e.s),
+            ),
+            e,
+          ]);
+        }
+        go("dash");
+      }
+      function addG() {
+        const n = $("gn").value.trim();
+        if (!n) return;
+        const c = S.get("fw_cg", []).filter((x) => x[0] !== n);
+        c.push([n, $("gg").value, $("gd2").value.trim() || "Custom entry.", 1]);
+        S.set("fw_cg", c);
+        render();
+      }
+      function delG(n) {
+        S.set(
+          "fw_cg",
+          S.get("fw_cg", []).filter((x) => x[0] !== n),
+        );
+        render();
+      }
+      const csv = (h, rows) =>
+        [h, ...rows]
+          .map((r) =>
+            r.map((c) => '"' + String(c).replace(/"/g, '""') + '"').join(","),
+          )
+          .join("\n");
+      function dlW() {
+        const r = S.get("fw_logs", [])
+          .filter((l) => l.s === "Body weight")
+          .sort((a, b) => (a.d < b.d ? -1 : 1))
+          .map((l) => [l.d, l.v, l.b || ""]);
+        saveFile("body-weight.csv", csv(["Date", "Weight (kg)", "BMI"], r));
+      }
+      function addTr() {
+        const n = $("tn").value.trim();
+        if (!n) return;
+        const t = S.get("fw_tr", []);
+        t.push({
+          id: "t" + Date.now(),
+          name: n,
+          unit: $("tu").value.trim(),
+          rows: [],
+        });
+        S.set("fw_tr", t);
+        render();
+      }
+      function logTr(id) {
+        const v = parseFloat($("tv" + id).value),
+          d = $("td" + id).value;
+        if (isNaN(v) || !d) return;
+        const t = S.get("fw_tr", []),
+          x = t.find((a) => a.id === id);
+        x.rows = x.rows.filter((r) => r.d !== d);
+        x.rows.push({ d, v });
+        S.set("fw_tr", t);
+        render();
+      }
+      function delTrRow(id, i) {
+        const t = S.get("fw_tr", []);
+        t.find((a) => a.id === id).rows.splice(i, 1);
+        S.set("fw_tr", t);
+        render();
+      }
+      function delTr(id) {
+        if (confirm("Delete this tracker and all its entries?")) {
+          S.set(
+            "fw_tr",
+            S.get("fw_tr", []).filter((a) => a.id !== id),
+          );
+          render();
+        }
+      }
+      function dlTr(id) {
+        const x = S.get("fw_tr", []).find((a) => a.id === id);
+        saveFile(
+          x.name.replace(/\W+/g, "-") + ".csv",
+          csv(
+            ["Date", x.name + (x.unit ? " (" + x.unit + ")" : "")],
+            [...x.rows]
+              .sort((a, b) => (a.d < b.d ? -1 : 1))
+              .map((r) => [r.d, r.v]),
+          ),
+        );
       }
       render();
     </script>
