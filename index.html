@@ -219,7 +219,7 @@
       .ex {
         display: flex;
         gap: 12px;
-        align-items: center;
+        align-items: flex-start;
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 12px;
@@ -367,6 +367,211 @@
       .vb {
         margin-top: 8px;
       }
+      .wd.g {
+        background: #0f2a1c;
+        border-color: #22c55e;
+      }
+      .wd.r {
+        background: #2a1010;
+        border-color: #ef4444;
+      }
+      .wd.n {
+        opacity: 0.65;
+      }
+      .wd {
+        font-size: 13px;
+      }
+      .pill {
+        display: inline-block;
+        background: var(--card2);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 3px 9px;
+        font-size: 13px;
+        margin: 4px 6px 0 0;
+      }
+      .pill b {
+        color: var(--ac2);
+      }
+      .last {
+        font-size: 13px;
+        color: var(--mut);
+        margin-top: 8px;
+      }
+      .ok {
+        color: #6ee7a0;
+        font-size: 13px;
+        margin-top: 8px;
+      }
+      .lg {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 8px;
+      }
+      .lg input {
+        width: 78px;
+        padding: 6px 8px;
+      }
+      .note {
+        background: var(--card);
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        color: var(--mut);
+      }
+      .brow {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      .brow input,
+      .brow select {
+        flex: 1 1 90px;
+        width: auto;
+      }
+      .brow .nm {
+        flex: 3 1 170px;
+      }
+      .fl {
+        display: flex;
+        flex-direction: column;
+        font-size: 11px;
+        color: var(--mut);
+        gap: 3px;
+        flex: 1 1 90px;
+      }
+      .fl.nm {
+        flex: 3 1 170px;
+      }
+      .brow .fl input,
+      .brow .fl select,
+      .fl input {
+        flex: none;
+        width: 100%;
+      }
+      .num {
+        width: 20px;
+        color: var(--ac2);
+        font-weight: 700;
+        align-self: flex-end;
+        padding-bottom: 10px;
+      }
+      .bh {
+        margin: 24px 0 10px;
+        padding: 9px 12px;
+        border-left: 4px solid var(--c);
+        background: var(--card2);
+        border-radius: 8px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+      .bh small {
+        display: block;
+        font-weight: 400;
+        color: var(--mut);
+        letter-spacing: 0;
+      }
+      .art img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .m2 {
+        max-height: 80vh;
+        overflow: auto;
+      }
+      .ex .art {
+        align-self: flex-start;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 700px) {
+        .two {
+          grid-template-columns: 1fr;
+        }
+      }
+      .dr {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 7px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 14px;
+      }
+      .dr small {
+        display: block;
+        color: var(--ac2);
+        font-size: 12px;
+      }
+      .dr i {
+        font-style: normal;
+        color: #6ee7a0;
+        font-weight: 700;
+      }
+      #modal2 .mbox {
+        max-width: 1000px;
+      }
+      .wk {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 10px;
+      }
+      .wc {
+        background: var(--card2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .wc.t {
+        border-color: var(--ac);
+      }
+      .wc.rs {
+        opacity: 0.55;
+      }
+      .wc h4 {
+        margin: 0 0 4px;
+        font-size: 15px;
+      }
+      .wc h4 small {
+        display: block;
+        color: var(--ac2);
+        font-size: 11px;
+        letter-spacing: 1px;
+      }
+      .wsec {
+        font-size: 11px;
+        color: var(--mut);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 10px 0 3px;
+      }
+      .wl {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        font-size: 13px;
+      }
+      .wl li {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 3px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .wl em {
+        color: var(--ac2);
+        font-style: normal;
+        white-space: nowrap;
+      }
       footer {
         text-align: center;
         color: var(--mut);
@@ -407,6 +612,19 @@
           <button class="btn g sm" onclick="closeV()">✕ Close</button>
         </div>
         <div class="vw" id="mv"></div>
+      </div>
+    </div>
+    <div
+      class="modal"
+      id="modal2"
+      onclick="if (event.target === this) closeW();"
+    >
+      <div class="mbox">
+        <div class="mhead">
+          <h3 id="mt2"></h3>
+          <button class="btn g sm" onclick="closeW()">✕ Close</button>
+        </div>
+        <div class="m2" id="mw"></div>
       </div>
     </div>
     <footer>FitForge demo · Train with discipline, rest with purpose.</footer>
@@ -478,8 +696,7 @@
         "exercises": {
           "Treadmill": [
             "Cardio",
-            "Light walk or jog to raise body temperature and heart rate before lifting.",
-            "https://www.youtube.com/shorts/Z1NfHk8_jcQ"
+            "Light walk or jog to raise body temperature and heart rate before lifting."
           ],
           "Arm circles": [
             "Mobility",
@@ -1007,19 +1224,25 @@
               ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
           );
       const todayName = () => DAYS[(new Date().getDay() + 6) % 7],
-        iso = () => new Date().toISOString().slice(0, 10);
+        iso = (d = new Date()) =>
+          d.getFullYear() +
+          "-" +
+          String(d.getMonth() + 1).padStart(2, "0") +
+          "-" +
+          String(d.getDate()).padStart(2, "0");
       const all = () => [...D.routines, ...S.get("fw_custom", [])];
       const active = () =>
         all().find((r) => r.id === S.get("fw_active", "classic")) ||
         D.routines[0];
+      const allEx = () => ({ ...D.exercises, ...S.get("fw_cx", {}) });
       const info = (n) =>
-        D.exercises[n] || [
+        allEx()[n] || [
           "Other",
           "Custom exercise. Follow the sets and reps listed in your routine.",
         ];
       const art = (g, x = "") => {
         const c = D.groups[g] || D.groups.Other;
-        return `<div class="art" style="background:linear-gradient(135deg,${c[0]},${c[1]})"><span>${c[2]}</span></div>`;
+        return `<div class="art" style="background:linear-gradient(135deg,${c[0]},${c[1]})"><span>${c[2]}</span>${x ? `<img src="${esc(x)}" alt="">` : ""}</div>`;
       };
       const quote = (i) => {
         const q =
@@ -1033,12 +1256,14 @@
         filter = "All",
         q = "",
         selDay = null,
-        series = "Body weight";
+        series = "Body weight",
+        pdate = "";
       const V = {
         dash: "Dashboard",
         today: "Today",
         routines: "Routines",
         lib: "Exercises",
+        learn: "Learn",
         prog: "Progress",
         build: "Builder",
       };
@@ -1054,28 +1279,306 @@
         render();
         scrollTo(0, 0);
       }
+      const bm = (b) =>
+        b < 18.5
+          ? ["Underweight", "#facc15"]
+          : b < 25
+            ? ["Healthy", "#6ee7a0"]
+            : ["High", "#f87171"];
+      const bpill = (b) =>
+        b
+          ? `<span class="pill" style="margin:0;color:${bm(b)[1]};border-color:${bm(b)[1]}"><b style="color:inherit">${b}</b> · ${bm(b)[0]}</span>`
+          : "—";
+      function dashStats(r) {
+        const n = new Date(),
+          ix = (n.getDay() + 6) % 7,
+          td = iso();
+        let miss = 0,
+          dn = 0;
+        DAYS.forEach((x, i) => {
+          const dt = iso(
+            new Date(n.getFullYear(), n.getMonth(), n.getDate() - ix + i),
+          );
+          if (dayDone(dt)) dn++;
+          else if (!r.single && !(r.days[x] || {}).rest && dt < td) miss++;
+        });
+        let nx = "—";
+        for (let k = 1; k <= 7; k++) {
+          const x = DAYS[(ix + k) % 7],
+            d = r.days[x];
+          if (d && !d.rest) {
+            nx = r.single ? "Any day" : x.slice(0, 3) + " · " + d.title;
+            break;
+          }
+        }
+        const L = S.get("fw_logs", [])
+            .filter((l) => l.s === "Body weight")
+            .sort((a, b) => (a.d < b.d ? -1 : 1))
+            .pop(),
+          t = (r.days[todayName()] || {}).title || "—";
+        const c = (l, v, sub, col, sz) =>
+          `<div class="card stat"><span class="mut">${l}</span><b style="${col ? "color:" + col + ";" : ""}${sz ? "font-size:" + sz + "px" : ""}">${v}</b><span class="mut" style="font-size:12px">${sub || ""}</span></div>`;
+        return (
+          c("Next up", esc(nx), "", 0, 17) +
+          c(
+            "Body weight",
+            L ? L.v + " kg" : "—",
+            L ? "Logged " + L.d : "Log it in Progress",
+          ) +
+          c(
+            "BMI",
+            L && L.b ? L.b : "—",
+            L && L.b ? bm(L.b)[0] : "Save your height in Progress",
+            L && L.b ? bm(L.b)[1] : "",
+          )
+        );
+      }
+      function cmp() {
+        const wl = S.get("fw_wl", {}),
+          t = todayName(),
+          a = wl[iso(new Date(Date.now() - 7 * 864e5))] || {},
+          b = wl[iso()] || {},
+          ns = [...new Set([...Object.keys(a), ...Object.keys(b)])],
+          tb = Object.keys(b).length,
+          hd = tb ? `${t}: last week vs today` : `Last ${t}’s workout`;
+        if (!ns.length)
+          return `<h2>${hd}</h2><div class="note">Nothing logged last ${t} yet. Log your sets in Today’s workout and they’ll show up here next week so you can compare.</div>`;
+        return `<h2>${hd}</h2><div class="card sc"><table><tr><th>Exercise</th><th>Last ${t}</th>${tb ? "<th>Today</th>" : ""}</tr>${ns.map((n) => `<tr><td>${esc(n)}</td><td>${a[n] ? fmt(a[n]) : "—"}</td>${tb ? `<td><b>${b[n] ? fmt(b[n]) : "—"}</b></td>` : ""}</tr>`).join("")}</table></div>`;
+      }
+      function dcard(lbl, dt, dn, isT) {
+        const r = active(),
+          d = r.days[dn],
+          wl = S.get("fw_wl", {})[dt] || {},
+          tk = S.get("fw_done_" + dt, []),
+          since = S.get("fw_since", "") || dt,
+          done = dayDone(dt);
+        const hd = `<div class="mut" style="font-size:12px;text-transform:uppercase;letter-spacing:1px">${lbl} · ${dt.slice(5)}</div>`;
+        if (!d)
+          return `<div class="card">${hd}<p class="mut">No workout planned.</p></div>`;
+        const ttl = `<h3 style="margin:4px 0 8px;font-size:18px">${esc(d.title)}</h3>`;
+        if (d.rest)
+          return `<div class="card">${hd}${ttl}<p class="mut">😴 Rest day. Recovery is part of the plan.</p></div>`;
+        if (!done) {
+          const pk = (a) => a[parseInt(dt.slice(8)) % a.length],
+            m = isT
+              ? pk([
+                  "The hardest rep is the first step. Start with just the warm-up and momentum will do the rest.",
+                  "Your future self is watching. Show up today and make them proud.",
+                  "Set your heart on the work, not the reward. Begin now.",
+                ])
+              : dt < since
+                ? "This was before you began this plan. Your journey starts now, so make today count!"
+                : pk([
+                    "You missed this one, and that’s okay. Every champion has off days. What matters is the next one.",
+                    "Missed workouts don’t define you; coming back does. Let’s make today count.",
+                    "One skipped session won’t change you, but giving up will. Keep going!",
+                  ]);
+          return `<div class="card" style="border-color:${isT ? "var(--ac)" : "#7f1d1d"}">${hd}${ttl}<p>${isT ? "💪" : "🔥"} ${m}</p>${isT ? `<button class="btn" onclick="go('today')">Start workout →</button>` : ""}</div>`;
+        }
+        let n = 0;
+        const rows = d.sections
+          .map(
+            (x) =>
+              `<div class="sec" style="margin:12px 0 4px">${esc(x.n)}</div>` +
+              x.items
+                .map((it) => {
+                  const nm = it.split("|")[0],
+                    id = dn + "|" + nm + ++n,
+                    l = wl[nm];
+                  return `<div class="dr"><span>${esc(nm)}${l ? `<small>${esc(fmt(l))}</small>` : ""}</span><i>${l || tk.includes(id) ? "✓" : '<span class="mut">○</span>'}</i></div>`;
+                })
+                .join(""),
+          )
+          .join("");
+        return `<div class="card" style="border-color:#22c55e55">${hd}${ttl}${rows}</div>`;
+      }
+      function dcards() {
+        const n = new Date(),
+          t = todayName();
+        return `<h2>Workout snapshot</h2><div class="two">${dcard("Last " + t, iso(new Date(n.getFullYear(), n.getMonth(), n.getDate() - 7)), t, 0)}${dcard("Today", iso(), t, 1)}</div>`;
+      }
+      const dayDone = (dt) =>
+        S.get("fw_done_" + dt, []).length > 0 ||
+        Object.keys(S.get("fw_wl", {})[dt] || {}).length > 0;
+      function wk(r) {
+        const n = new Date(),
+          ix = (n.getDay() + 6) % 7,
+          td = iso(),
+          since = S.get("fw_since", "") || (S.set("fw_since", td), td);
+        return DAYS.map((x, i) => {
+          const dt = iso(
+              new Date(n.getFullYear(), n.getMonth(), n.getDate() - ix + i),
+            ),
+            rs = (r.days[x] || {}).rest,
+            dn = dayDone(dt),
+            c = dn
+              ? "g"
+              : rs || r.single
+                ? "n"
+                : dt < td && dt >= since
+                  ? "r"
+                  : dt === td
+                    ? "t"
+                    : "n";
+          return `<div class="wd ${c}" onclick="selDay='${x}';go('routines')"><b>${x.slice(0, 3)}</b>${dt.slice(8)}<br>${dn ? "✓" : rs ? "😴" : dt < td && dt >= since && !r.single ? "✗" : "·"}</div>`;
+        }).join("");
+      }
+      const W_MSG =
+          "Please warm up nicely before you start. A few minutes of light cardio plus gentle arm and leg swings wakes up your muscles and joints and lowers your risk of injury.",
+        S_MSG =
+          "Don’t skip the cool-down. Spend 5–10 minutes stretching what you trained, hold each stretch for about 30 seconds and breathe slowly. Your body will thank you tomorrow.";
+      const tg = (d) => {
+        d = d || "";
+        if (!d.trim()) return { t: "s", sets: "", reps: "" };
+        let m = d.match(/^(\d+)\s*x\s*(.+)$/i);
+        if (m)
+          return {
+            t: "s",
+            sets: m[1],
+            reps: m[2]
+              .replace("/leg", " each leg")
+              .replace("/side", " each side")
+              .replace(/max/i, "Max")
+              .replace("-", "–"),
+          };
+        if ((m = d.match(/^(\d+)\s*sets?$/i)))
+          return { t: "s", sets: m[1], reps: "" };
+        if ((m = d.match(/^(.+?)\s*reps$/i)))
+          return { t: "s", sets: "", reps: m[1] };
+        return /^\d+(\.\d+)?\s*(min|s)\b/i.test(d) ? { t: "t" } : { t: "n" };
+      };
+      const fmt = (l) => {
+        if (l.m != null) return l.m + " min";
+        const a =
+          l.sets ||
+          (l.s ? Array.from({ length: l.s }, () => ({ w: l.w, r: l.r })) : []);
+        return (
+          a
+            .map((x) =>
+              [x.w && x.w + " kg", x.r && x.r + " reps"]
+                .filter(Boolean)
+                .join(" × "),
+            )
+            .filter(Boolean)
+            .join(" · ") || "Done"
+        );
+      };
+      function lastLog(nm) {
+        const wl = S.get("fw_wl", {}),
+          cut = iso(new Date(Date.now() - 7 * 864e5)),
+          d = Object.keys(wl)
+            .filter((x) => x < iso() && x >= cut && wl[x][nm])
+            .sort()
+            .pop();
+        return d ? [d, wl[d][nm]] : null;
+      }
+      const sr = (k, w, r) =>
+        `<div class="sr lg"><span class="mut" style="width:44px">Set ${k}</span><input type="number" step="0.5" placeholder="kg" value="${w}"><span class="mut">×</span><input type="number" placeholder="reps" value="${r}"></div>`;
+      function addSet(N) {
+        const c = $("sr" + N);
+        c.insertAdjacentHTML("beforeend", sr(c.children.length + 1, "", ""));
+      }
       function dayHTML(r, dn, track) {
         const d = r.days[dn];
         if (!d) return '<p class="mut">No workout planned.</p>';
         if (d.rest)
           return `<div class="card"><h3>😴 Rest Day</h3><p class="mut">Recovery is where growth happens. Hydrate, sleep well and stretch lightly.</p></div>`;
-        const done = S.get(doneKey(), []);
+        const done = S.get(doneKey(), []),
+          td = S.get("fw_wl", {})[iso()] || {},
+          sc = d.sections || [],
+          isW = (x) => x.kind === "warm" || /warm/i.test(x.n),
+          isS = (x) => x.kind === "stretch" || /stretch/i.test(x.n);
         let n = 0;
-        return (d.sections || [])
-          .map(
-            (s) =>
-              `<div class="sec">${esc(s.n)}</div>` +
-              s.items
-                .map((it) => {
-                  const [nm, det] = it.split("|"),
-                    e = info(nm),
-                    id = dn + "|" + nm + n++,
-                    ck = done.includes(id);
-                  return `<div class="ex ${track && ck ? "done" : ""}">${track ? `<input type="checkbox" ${ck ? "checked" : ""} onchange="tick('${esc(id)}')">` : ""}${art(e[0])}<div><b>${esc(nm)}</b> <span class="tag">${e[0]}</span><div class="det">${esc(det || "")}</div><details><summary class="mut" style="font-size:13px">How to</summary><div class="det">${esc(e[1])}</div></details>${e[2] ? `<button class="btn sm vb" data-n="${esc(nm)}" onclick="openV(this.dataset.n)">▶ Watch video</button>` : ""}</div></div>`;
-                })
-                .join(""),
-          )
-          .join("");
+        const blk = (ic, t, m) =>
+          `<div class="sec">${t}</div><div class="note">${ic} ${m}</div>`;
+        return (
+          (sc.some(isW) ? "" : blk("🔥", "Warm-up", W_MSG)) +
+          sc
+            .map((x) => {
+              const ws = isW(x) || isS(x) || /recover/i.test(x.n);
+              return (
+                `<div class="sec">${esc(x.n)}</div>` +
+                x.items
+                  .map((it) => {
+                    const [nm, det] = it.split("|"),
+                      e = info(nm),
+                      g = tg(det),
+                      N = ++n,
+                      id = dn + "|" + nm + N,
+                      ck = done.includes(id),
+                      lg = track && !ws && g.t !== "n",
+                      tl = td[nm],
+                      lt = lg && lastLog(nm);
+                    const tgt =
+                      g.t === "s"
+                        ? (g.sets
+                            ? `<span class="pill"><b>${g.sets}</b> sets</span>`
+                            : "") +
+                          (g.reps
+                            ? `<span class="pill"><b>${esc(g.reps)}</b>${/\ds$/.test(g.reps) ? "" : " reps"}</span>`
+                            : "")
+                        : g.t === "t"
+                          ? `<span class="pill">⏱ <b>${esc(det)}</b></span>`
+                          : det
+                            ? `<span class="pill">${esc(det)}</span>`
+                            : "";
+                    let rows = "";
+                    if (lg && g.t === "s") {
+                      const a = tl
+                          ? tl.sets ||
+                            (tl.s
+                              ? Array.from({ length: tl.s }, () => ({
+                                  w: tl.w,
+                                  r: tl.r,
+                                }))
+                              : [])
+                          : [],
+                        k = Math.max(a.length, tl ? 0 : +g.sets || 3);
+                      for (let i = 0; i < k; i++)
+                        rows += sr(
+                          i + 1,
+                          a[i] ? a[i].w || "" : "",
+                          a[i] ? a[i].r || "" : "",
+                        );
+                    }
+                    return `<div class="ex ${track && (ck || tl) ? "done" : ""}">${art(e[0], e[3])}<div><b>${esc(nm)}</b> <span class="tag">${e[0]}</span><div>${tgt}</div>
+  ${lg ? (lt ? `<div class="last">Past week (${lt[0].slice(5)}): <b>${fmt(lt[1])}</b></div>` : '<div class="last">No record in the past week</div>') : ""}${tl ? `<div class="ok">✓ Logged today: ${fmt(tl)}</div>` : ""}
+  ${lg ? `<details ${tl ? "open" : ""}><summary style="font-size:13px;color:var(--ac2)">${tl ? "Edit log" : "Log this exercise (optional)"}</summary>${g.t === "s" ? `<div id="sr${N}">${rows}</div>` : `<div class="lg"><input id="m${N}" type="number" step="0.5" placeholder="minutes" value="${tl && tl.m != null ? tl.m : ""}"></div>`}<div class="lg">${g.t === "s" ? `<button class="btn g sm" onclick="addSet(${N})">+ Add set</button>` : ""}<button class="btn sm" data-n="${esc(nm)}" onclick="logEx(this.dataset.n,'${g.t}',${N})">${tl ? "Update log" : "Save log"}</button></div></details>` : ""}
+  <details><summary class="mut" style="font-size:13px">How to</summary><div class="det">${esc(e[1])}</div></details>${e[2] ? `<button class="btn sm vb" data-n="${esc(nm)}" onclick="openV(this.dataset.n)">▶ Watch video</button>` : ""}</div>${track ? `<input type="checkbox" title="Mark as done" ${ck || tl ? "checked" : ""} ${tl ? "disabled" : ""} onchange="tick('${esc(id)}')">` : ""}</div>`;
+                  })
+                  .join("")
+              );
+            })
+            .join("") +
+          (sc.some(isS) ? "" : blk("🧘", "Stretching", S_MSG))
+        );
+      }
+      function logEx(nm, t, N) {
+        const wl = S.get("fw_wl", {}),
+          d = iso();
+        wl[d] = wl[d] || {};
+        if (t === "t") {
+          const m = parseFloat($("m" + N).value);
+          wl[d][nm] = isNaN(m) ? { sets: [] } : { m };
+        } else {
+          const a = [...$("sr" + N).children]
+            .map((r) => ({
+              w: parseFloat(r.children[1].value) || "",
+              r: r.children[3].value.trim(),
+            }))
+            .filter((x) => x.w || x.r);
+          wl[d][nm] = { sets: a };
+          const mx = Math.max(0, ...a.map((x) => x.w || 0));
+          if (mx) {
+            const l = S.get("fw_logs", []).filter(
+              (x) => !(x.d === d && x.s === nm),
+            );
+            l.push({ d, s: nm, v: mx });
+            S.set("fw_logs", l);
+          }
+        }
+        S.set("fw_wl", wl);
+        render();
       }
       function tick(id) {
         let d = S.get(doneKey(), []);
@@ -1094,21 +1597,23 @@
           const r = active(),
             t = todayName(),
             d = r.days[t] || { title: "—" },
-            done = S.get(doneKey(), []).length,
+            done =
+              S.get(doneKey(), []).length +
+              Object.keys(S.get("fw_wl", {})[iso()] || {}).length,
             tot = total(r, t),
             logs = S.get("fw_logs", [])
               .filter((l) => l.s === "Body weight")
               .sort((a, b) => (a.d < b.d ? -1 : 1)),
             last = logs[logs.length - 1];
           return `<div class="hero"><div class="mut">${t} · ${new Date().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}</div><h1>Today: ${esc(d.title)}</h1><p class="mut">Active plan: ${esc(r.name)}</p><button class="btn" onclick="go('today')">Start workout →</button></div>
- <h2>This week</h2><div class="week">${DAYS.map((x) => `<div class="wd ${x === t ? "t" : ""}" onclick="selDay='${x}';go('routines')"><b>${x.slice(0, 3)}</b>${esc((r.days[x] || {}).title || "—").split(" ")[0]}</div>`).join("")}</div>
- <h2>Overview</h2><div class="grid"><div class="card stat"><span class="mut">Exercises done today</span><b>${done}/${tot}</b></div><div class="card stat"><span class="mut">Latest body weight</span><b>${last ? last.v + " kg" : "—"}</b></div><div class="card stat"><span class="mut">Routines available</span><b>${all().length}</b></div><div class="card stat"><span class="mut">Weight entries</span><b>${S.get("fw_logs", []).length}</b></div></div>
+ <h2>This week</h2><div class="week">${wk(r)}</div><div class="mut" style="font-size:12px;margin-top:8px">🟢 worked out · 🔴 missed · 😴 rest day</div>
+ <h2>Overview</h2><div class="grid">${dashStats(r)}</div>${dcards()}
  <h2>Daily motivation</h2><div class="card">${quote()}<button class="btn g sm" style="margin-top:12px" onclick="render()">Another quote</button></div>`;
         },
         today() {
           const r = active(),
             t = todayName();
-          return `<h1>Today’s workout</h1><p class="mut">${t} · ${esc(r.days[t]?.title || "")} · ${esc(r.name)}</p><div class="card" style="margin:14px 0">${quote(new Date().getDate())}</div>${dayHTML(r, t, true)}`;
+          return `<h1>Today’s workout</h1><p class="mut">${t} · ${esc(r.days[t]?.title || "")} · ${esc(r.name)}</p><div class="card" style="margin:14px 0">${quote(new Date().getDate())}</div><div class="note" style="margin-bottom:12px">New to lifting? A <b>set</b> is one round of reps. “3 sets · 10 reps” means: do 10 reps, rest about a minute, and repeat 3 times in total.</div>${dayHTML(r, t, true)}`;
         },
         routines() {
           const a = active(),
@@ -1116,7 +1621,7 @@
           return `<h1>Workout routines</h1><p class="mut">Pick a plan to make it your active routine.</p><div class="grid" style="margin-top:14px">${all()
             .map(
               (r) =>
-                `<div class="card"><span class="tag">${esc(r.level || "Custom")}</span> ${r.id === a.id ? '<span class="tag" style="color:#6ee7a0">Active</span>' : ""}<h3 style="margin:8px 0 4px">${esc(r.name)}</h3><div class="mut" style="font-size:13px">${esc(r.desc || "")}</div><div class="row" style="margin-top:12px"><button class="btn sm" onclick="setA('${r.id}')">Use this plan</button>${String(r.id).startsWith("c_") ? `<button class="btn g sm" onclick="delR('${r.id}')">Delete</button>` : ""}</div></div>`,
+                `<div class="card"><span class="tag">${esc(r.level || "Custom")}</span> ${r.id === a.id ? '<span class="tag" style="color:#6ee7a0">Active</span>' : ""}<h3 style="margin:8px 0 4px">${esc(r.name)}</h3><div class="mut" style="font-size:13px">${esc(r.desc || "")}</div><div class="row" style="margin-top:12px"><button class="btn sm" onclick="setA('${r.id}')">Use this plan</button><button class="btn g sm" onclick="openW('${r.id}')">View full week</button>${String(r.id).startsWith("c_") ? `<button class="btn g sm" onclick="delR('${r.id}')">Delete</button>` : ""}</div></div>`,
             )
             .join("")}</div>
  <h2>${esc(a.name)} — weekly view</h2><div class="chips">${DAYS.map((x) => `<span class="chip ${x === sel ? "on" : ""}" onclick="selDay='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div><h3>${sel}: ${esc(a.days[sel]?.title || "Rest")}</h3>${dayHTML(a, sel, false)}`;
@@ -1126,15 +1631,19 @@
               "All",
               ...Object.keys(D.groups).filter((g) => g !== "Other"),
             ],
-            es = Object.entries(D.exercises).filter(
+            es = Object.entries(allEx()).filter(
               ([n, e]) =>
                 (filter === "All" || e[0] === filter) &&
                 n.toLowerCase().includes(q.toLowerCase()),
             );
-          return `<h1>Exercise library</h1><p class="mut">Browse movements with descriptions and form cues.</p><input placeholder="Search exercises…" value="${esc(q)}" oninput="q=this.value;render(1)" style="margin-top:12px"><div class="chips">${gs.map((g) => `<span class="chip ${g === filter ? "on" : ""}" onclick="filter='${g}';render()">${g}</span>`).join("")}</div><div class="grid">${es.map(([n, e]) => `<div class="card" style="padding:10px">${art(e[0])}<h3 style="margin:10px 0 4px">${esc(n)}</h3><span class="tag">${e[0]}</span><p class="mut" style="font-size:13px;margin:8px 0 0">${esc(e[1])}</p>${e[2] ? `<button class="btn sm vb" data-n="${esc(n)}" onclick="openV(this.dataset.n)">▶ Watch video</button>` : ""}</div>`).join("") || '<p class="mut">No exercises found.</p>'}</div>`;
+          return `<h1>Exercise library</h1><p class="mut">Browse movements with descriptions and form cues.</p><input placeholder="Search exercises…" value="${esc(q)}" oninput="q=this.value;render(1)" style="margin-top:12px"><div class="chips">${gs.map((g) => `<span class="chip ${g === filter ? "on" : ""}" onclick="filter='${g}';render()">${g}</span>`).join("")}</div>${exForm()}<div class="grid">${es.map(([n, e]) => `<div class="card" style="padding:10px">${art(e[0], e[3])}<h3 style="margin:10px 0 4px">${esc(n)}</h3><span class="tag">${e[0]}</span><p class="mut" style="font-size:13px;margin:8px 0 0">${esc(e[1])}</p>${e[2] ? `<button class="btn sm vb" data-n="${esc(n)}" onclick="openV(this.dataset.n)">▶ Watch video</button>` : ""}${S.get("fw_cx", {})[n] ? ` <button class="btn g sm vb" data-n="${esc(n)}" onclick="delX(this.dataset.n)">Remove</button>` : ""}</div>`).join("") || '<p class="mut">No exercises found.</p>'}</div>`;
+        },
+        learn() {
+          return `<h1>Learn the basics</h1><p class="mut">Muscles and gym terms explained in plain language.</p><div class="grid" style="margin-top:14px">${G.map((g) => `<div class="card" style="padding:10px">${art(g[1])}<h3 style="margin:10px 0 4px">${esc(g[0])}</h3><p class="mut" style="font-size:13px;margin:0">${esc(g[2])}</p></div>`).join("")}</div>`;
         },
         prog() {
           const logs = S.get("fw_logs", []),
+            h = S.get("fw_h", 0),
             names = [...new Set(logs.map((l) => l.s))];
           if (!names.includes(series)) names.unshift(series);
           const pts = logs
@@ -1145,35 +1654,64 @@
             mx = Math.max(...vs),
             rg = mx - mn || 1;
           const P = pts.map((p, i) => [
-            pts.length > 1 ? 30 + i * (540 / (pts.length - 1)) : 300,
-            160 - ((p.v - mn) / rg) * 120,
-          ]);
-          const delta =
-            pts.length > 1 ? (vs[vs.length - 1] - vs[0]).toFixed(1) : null;
-          return `<h1>Progress tracker</h1><p class="mut">Log body weight or lifts (kg) every day and compare over time.</p>
- <div class="card" style="margin:14px 0"><div class="row"><input id="ls" list="dl" value="Body weight" placeholder="Body weight or exercise"><input id="ld" type="date" value="${iso()}"><input id="lv" type="number" step="0.1" placeholder="Weight (kg)"><button class="btn" onclick="addLog()">Add entry</button></div><datalist id="dl">${["Body weight", ...Object.keys(D.exercises)].map((n) => `<option value="${esc(n)}">`).join("")}</datalist></div>
- <div class="card"><div class="row"><select onchange="series=this.value;render()">${names.map((n) => `<option ${n === series ? "selected" : ""}>${esc(n)}</option>`).join("")}</select>${delta !== null ? `<b style="flex:2;color:${delta <= 0 ? "#6ee7a0" : "var(--ac2)"}">Change since first entry: ${delta > 0 ? "+" : ""}${delta} kg</b>` : '<span class="mut" style="flex:2">Add 2+ entries to see a trend.</span>'}</div>
- ${pts.length ? `<div class="sc"><svg viewBox="0 0 600 190" style="width:100%;min-width:420px;margin-top:10px"><polyline fill="none" stroke="#ff6b35" stroke-width="3" points="${P.map((p) => p.join(",")).join(" ")}"/>${P.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="#ffb347"/><text x="${p[0]}" y="${p[1] - 10}" fill="#e8ecf4" font-size="11" text-anchor="middle">${vs[i]}</text><text x="${p[0]}" y="184" fill="#8e98ad" font-size="10" text-anchor="middle">${pts[i].d.slice(5)}</text>`).join("")}</svg></div>` : '<p class="mut">No entries yet for this series.</p>'}</div>
- <h2>History</h2><div class="card sc"><table><tr><th>Date</th><th>Series</th><th>kg</th><th></th></tr>${
-   [...logs]
-     .map((l, i) => [l, i])
-     .sort((a, b) => (a[0].d < b[0].d ? 1 : -1))
-     .slice(0, 30)
-     .map(
-       ([l, i]) =>
-         `<tr><td>${l.d}</td><td>${esc(l.s)}</td><td>${l.v}</td><td><button class="btn g sm" onclick="delL(${i})">✕</button></td></tr>`,
-     )
-     .join("") || '<tr><td colspan=4 class="mut">Nothing logged.</td></tr>'
- }</table></div>`;
+              pts.length > 1 ? 30 + i * (540 / (pts.length - 1)) : 300,
+              160 - ((p.v - mn) / rg) * 120,
+            ]),
+            delta =
+              pts.length > 1 ? (vs[vs.length - 1] - vs[0]).toFixed(1) : null;
+          const rows = logs
+            .map((l, i) => [l, i])
+            .filter((x) => !pdate || x[0].d === pdate)
+            .sort((a, b) => (a[0].d < b[0].d ? 1 : -1))
+            .slice(0, pdate ? 50 : 15);
+          return `<h1>Progress tracker</h1><p class="mut">Log your body weight any day (daily or whenever you like), and track lifts too.</p>
+ <div class="card" style="margin:14px 0"><div class="row"><input id="ht" type="number" placeholder="Your height in cm, e.g. 170" value="${h || ""}"><button class="btn g" onclick="saveH()">${h ? "Update" : "Save"} height</button></div><div class="mut" style="font-size:13px;margin-top:8px">Height is used to calculate BMI whenever you log body weight. 🟡 under 18.5 · 🟢 18.5–24.9 · 🔴 25 or more</div></div>
+ <div class="card"><div class="row"><select id="ls"><option>Body weight</option>${Object.keys(
+   allEx(),
+ )
+   .map((n) => `<option>${esc(n)}</option>`)
+   .join(
+     "",
+   )}</select><input id="ld" type="date" value="${iso()}"><input id="lv" type="number" step="0.1" placeholder="Weight in kg"><button class="btn" onclick="addLog()">Add entry</button></div><datalist id="dl">${["Body weight", ...Object.keys(allEx())].map((n) => `<option value="${esc(n)}">`).join("")}</datalist></div>
+ <h2>Body weight summary</h2>${(() => {
+   const b = logs
+     .filter((l) => l.s === "Body weight")
+     .sort((x, y) => (x.d < y.d ? -1 : 1));
+   if (!b.length)
+     return '<p class="mut">Log your body weight to see your summary.</p>';
+   const f = b[0],
+     l = b[b.length - 1],
+     dd = (l.v - f.v).toFixed(1);
+   return `<div class="grid"><div class="card stat"><span class="mut">Starting</span><b>${f.v} kg</b><span class="mut" style="font-size:12px">${f.d}</span></div><div class="card stat"><span class="mut">Latest</span><b>${l.v} kg</b><span>${bpill(l.b)}</span></div><div class="card stat"><span class="mut">Change</span><b style="color:${dd <= 0 ? "#6ee7a0" : "var(--ac2)"}">${dd > 0 ? "+" : ""}${dd} kg</b></div></div>`;
+ })()}
+ <h2>Entries</h2><div class="card"><div class="row" style="margin-bottom:10px"><label class="fl">Show a specific day<input type="date" value="${pdate}" onchange="pdate=this.value;render()"></label><button class="btn g sm" style="flex:0 0 auto" onclick="pdate='';render()">Show latest</button></div><div class="sc"><table><tr><th>Date</th><th>Entry</th><th>Weight</th><th>BMI</th><th></th></tr>${rows.map(([l, i]) => `<tr><td>${l.d}</td><td>${esc(l.s)}</td><td>${l.v} kg</td><td>${l.s === "Body weight" ? bpill(l.b) : "—"}</td><td><button class="btn g sm" onclick="delL(${i})">✕</button></td></tr>`).join("") || '<tr><td colspan=5 class="mut">No entries for this view.</td></tr>'}</table></div></div>`;
         },
         build() {
-          const c = S.get("fw_custom", []);
-          return `<h1>Routine builder</h1><p class="mut">Create unlimited custom routines. Write a day’s title, then one exercise per line as <code>Name | sets x reps</code>. Start a new section with <code># Section name</code>.</p>
- <div class="card" style="margin:14px 0"><div class="row"><input id="bn" placeholder="Routine name (e.g. My Summer Cut)"><input id="bd" placeholder="Short description"></div>
- ${DAYS.map((x, i) => `<details ${i == 0 ? "open" : ""}><summary><b>${x}</b></summary><input id="t${i}" placeholder="Day title or 'Rest Day'" value="${i == 0 ? "Back & Biceps" : ""}"><textarea id="x${i}" placeholder="# Warm-up&#10;Treadmill | 2 min&#10;# Back&#10;Lat pull-down | 3x8-12">${i == 0 ? "# Back\nLat pull-down | 3x8-12\nSeated cable row | 3x8-12\n# Biceps\nDumbbell curl | 3x10" : ""}</textarea></details>`).join("")}
- <button class="btn" style="margin-top:12px" onclick="saveR()">Save routine</button></div>
- <h2>Your custom routines (${c.length})</h2><div class="grid">${c.map((r) => `<div class="card"><h3>${esc(r.name)}</h3><p class="mut" style="font-size:13px">${esc(r.desc || "")}</p><div class="row"><button class="btn sm" onclick="setA('${r.id}')">Use</button><button class="btn g sm" onclick="delR('${r.id}')">Delete</button></div></div>`).join("") || '<p class="mut">None yet.</p>'}</div>
- <h2>JSON import / export</h2><div class="card"><p class="mut" style="margin-top:0">All routines live in a JSON structure (see the <code>data</code> block in this page’s source). Copy your custom routines below to back up, or paste JSON to import.</p><textarea id="js" style="min-height:140px">${esc(JSON.stringify(c, null, 1))}</textarea><div class="row" style="margin-top:10px"><button class="btn g" onclick="impJ()">Import JSON</button></div></div>`;
+          const d = gd(),
+            c = S.get("fw_custom", []),
+            wm = B.mode === "week";
+          const row = (k, i, x) =>
+            `<div class="brow"><span class="num">${i + 1}</span><label class="fl nm">Exercise<input list="dl2" placeholder="e.g. Lat pull-down" value="${esc(x.n)}" oninput="U('${k}',${i},'n',this.value)"></label><label class="fl">Type<select onchange="U('${k}',${i},'t',this.value);render()"><option value="s" ${x.t == "s" ? "selected" : ""}>Sets × reps</option><option value="t" ${x.t == "t" ? "selected" : ""}>Timer</option></select></label>${x.t == "s" ? `<label class="fl">Sets<input type="number" placeholder="e.g. 3" value="${esc(x.sets)}" oninput="U('${k}',${i},'sets',this.value)"></label><label class="fl">Reps<input placeholder="e.g. 8-12" value="${esc(x.reps)}" oninput="U('${k}',${i},'reps',this.value)"></label>` : `<label class="fl">Minutes<input type="number" placeholder="e.g. 5" value="${esc(x.min)}" oninput="U('${k}',${i},'min',this.value)"></label>`}<button class="btn g sm" onclick="arr('${k}').splice(${i},1);render()">✕</button></div>`;
+          const list = (k) =>
+            arr(k)
+              .map((x, i) => row(k, i, x))
+              .join("") +
+            `<button class="btn g sm" onclick="addI('${k}')">+ Add exercise</button>`;
+          const bh = (t, sub, c) =>
+            `<div class="bh" style="--c:${c}">${t}<small>${sub}</small></div>`;
+          return `<h1>Routine builder</h1><p class="mut">Build a full week plan, or just one workout.</p>
+ <div class="chips"><span class="chip ${wm ? "on" : ""}" onclick="setMode('week')">📅 Full week routine</span><span class="chip ${wm ? "" : "on"}" onclick="setMode('single')">💪 Single workout</span></div>
+ <div class="card"><div class="row"><label class="fl">${wm ? "Routine name" : "Workout name"}<input placeholder="${wm ? "e.g. My 6-day split" : "e.g. Back & Biceps"}" value="${esc(B.name)}" oninput="B.name=this.value"></label><label class="fl">Description (optional)<input placeholder="A short note" value="${esc(B.desc)}" oninput="B.desc=this.value"></label></div></div>
+ ${wm ? `<div class="chips">${DAYS.map((x) => `<span class="chip ${x === B.day ? "on" : ""}" onclick="B.day='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div>` : ""}
+ <div class="card"><h3>${wm ? B.day : "Your workout"}</h3>${wm ? `<div class="row" style="margin:10px 0"><label class="fl">Day title<input placeholder="e.g. Back & Biceps" value="${esc(d.title)}" oninput="gd().title=this.value"></label><label class="mut" style="flex:0 0 auto"><input type="checkbox" style="width:auto" ${d.rest ? "checked" : ""} onchange="gd().rest=this.checked;render()"> Rest day</label></div>` : ""}
+ ${d.rest ? '<p class="mut">Enjoy your rest 😴</p>' : bh("PART 1 · WARM-UP", "Optional. Leave empty and a friendly reminder is shown.", "#ff6b35") + list("w") + bh("PART 2 · WORKOUT", "Add one block per muscle group, e.g. Back, then Biceps.", "#3b82f6") + d.main.map((m, i) => `<div class="card" style="background:var(--card2);margin-bottom:12px"><label class="fl">Block title<input placeholder="e.g. Back" value="${esc(m.n)}" oninput="gd().main[${i}].n=this.value"></label><div style="height:10px"></div>${list(String(i))}${d.main.length > 1 ? ` <button class="btn g sm" onclick="gd().main.splice(${i},1);render()">Remove block</button>` : ""}</div>`).join("") + '<button class="btn g" onclick="addM()">+ Add another muscle group</button>' + bh("PART 3 · STRETCHING", "Optional. Leave empty and a reminder is shown.", "#22c55e") + list("s")}</div>
+ <datalist id="dl2">${Object.keys(allEx())
+   .map((n) => `<option value="${esc(n)}">`)
+   .join(
+     "",
+   )}</datalist><p class="mut" style="font-size:13px">${wm ? "Days you leave empty are saved as rest days." : "A single workout can be done on any day."}</p><button class="btn" onclick="saveR()">Save ${wm ? "routine" : "workout"}</button>
+ <h2>Your saved routines & workouts (${c.length})</h2><div class="grid">${c.map((r) => `<div class="card"><span class="tag">${esc(r.level || "Custom")}</span><h3 style="margin-top:8px">${esc(r.name)}</h3><p class="mut" style="font-size:13px">${esc(r.desc || "")}</p><div class="row"><button class="btn sm" onclick="setA('${r.id}')">Use</button><button class="btn g sm" onclick="delR('${r.id}')">Delete</button></div></div>`).join("") || '<p class="mut">None yet.</p>'}</div>
+ <h2>JSON import / export</h2><div class="card"><textarea id="js" style="min-height:130px">${esc(JSON.stringify(c, null, 1))}</textarea><div class="row" style="margin-top:10px"><button class="btn g" onclick="impJ()">Import JSON</button></div></div>`;
         },
       };
       function render(keep) {
@@ -1193,6 +1731,7 @@
       }
       function setA(id) {
         S.set("fw_active", id);
+        S.set("fw_since", iso());
         go("today");
       }
       function delR(id) {
@@ -1205,15 +1744,30 @@
       }
       function addLog() {
         const s = $("ls").value.trim() || "Body weight",
-          v = parseFloat($("lv").value);
-        if (!v) return;
+          v = parseFloat($("lv").value),
+          dt = $("ld").value,
+          h = S.get("fw_h", 0);
+        if (!v || !dt) return;
+        if (s === "Body weight" && !h) {
+          alert("Please save your height first so BMI can be calculated.");
+          return;
+        }
+        const e = { d: dt, s, v };
+        if (s === "Body weight") e.b = +(v / (h / 100) ** 2).toFixed(1);
         const l = S.get("fw_logs", []).filter(
-          (x) => !(x.d === $("ld").value && x.s === s),
+          (x) => !(x.d === dt && x.s === s),
         );
-        l.push({ d: $("ld").value, s, v });
+        l.push(e);
         S.set("fw_logs", l);
         series = s;
         render();
+      }
+      function saveH() {
+        const h = parseFloat($("ht").value);
+        if (h > 50 && h < 260) {
+          S.set("fw_h", h);
+          render();
+        } else alert("Please enter your height in cm, e.g. 170");
       }
       function delL(i) {
         const l = S.get("fw_logs", []);
@@ -1221,52 +1775,104 @@
         S.set("fw_logs", l);
         render();
       }
+      let B = { name: "", desc: "", day: "Monday", mode: "week", days: {} };
+      const gd = () =>
+        B.days[B.day] ||
+        (B.days[B.day] = {
+          title: "",
+          rest: false,
+          warm: [],
+          main: [{ n: "", items: [] }],
+          stretch: [],
+        });
+      const arr = (k) =>
+        k === "w" ? gd().warm : k === "s" ? gd().stretch : gd().main[+k].items;
+      const U = (k, i, f, v) => {
+          arr(k)[i][f] = v;
+        },
+        addI = (k) => {
+          arr(k).push({ n: "", t: "s", sets: "", reps: "", min: "" });
+          render();
+        },
+        addM = () => {
+          gd().main.push({ n: "", items: [] });
+          render();
+        },
+        setMode = (m) => {
+          B.mode = m;
+          B.day = "Monday";
+          render();
+        };
       function saveR() {
-        const name = $("bn").value.trim();
+        const name = B.name.trim(),
+          wm = B.mode === "week";
         if (!name) {
-          alert("Please name your routine.");
+          alert("Please give it a name.");
           return;
         }
-        const days = {};
-        DAYS.forEach((x, i) => {
-          const t = $("t" + i).value.trim() || "Rest Day",
-            lines = $("x" + i)
-              .value.split("\n")
-              .map((s) => s.trim())
-              .filter(Boolean),
-            secs = [];
-          let cur = null;
-          lines.forEach((l) => {
-            if (l[0] === "#") {
-              cur = { n: l.replace(/^#+\s*/, ""), items: [] };
-              secs.push(cur);
-            } else {
-              if (!cur) {
-                cur = { n: "Workout", items: [] };
-                secs.push(cur);
-              }
-              cur.items.push(
-                l
-                  .split("|")
-                  .map((s) => s.trim())
-                  .join("|"),
-              );
-            }
+        const cv = (a) =>
+            a
+              .filter((x) => x.n.trim())
+              .map((x) => {
+                const n = x.n.trim();
+                if (x.t === "t") return n + "|" + (x.min ? x.min + " min" : "");
+                return (
+                  n +
+                  "|" +
+                  (x.sets && x.reps
+                    ? x.sets + "x" + x.reps
+                    : x.sets
+                      ? x.sets + " sets"
+                      : x.reps
+                        ? x.reps + " reps"
+                        : "")
+                );
+              }),
+          mk = (d) => {
+            const sc = [];
+            if (cv(d.warm).length)
+              sc.push({ n: "Warm-up", kind: "warm", items: cv(d.warm) });
+            d.main.forEach((m) => {
+              const it = cv(m.items);
+              if (it.length) sc.push({ n: m.n.trim() || "Workout", items: it });
+            });
+            if (cv(d.stretch).length)
+              sc.push({
+                n: "Stretching",
+                kind: "stretch",
+                items: cv(d.stretch),
+              });
+            return sc;
+          },
+          days = {};
+        if (wm)
+          DAYS.forEach((x) => {
+            const d = B.days[x],
+              sc = d && !d.rest ? mk(d) : [];
+            days[x] = sc.length
+              ? { title: d.title.trim() || "Workout", sections: sc }
+              : { title: "Rest Day", rest: true, sections: [] };
           });
-          days[x] =
-            /rest/i.test(t) && !secs.length
-              ? { title: t, rest: true, sections: [] }
-              : { title: t, sections: secs };
-        });
+        else {
+          const sc = B.days.Monday ? mk(B.days.Monday) : [];
+          if (!sc.length) {
+            alert("Add at least one exercise.");
+            return;
+          }
+          DAYS.forEach((x) => (days[x] = { title: name, sections: sc }));
+        }
         const c = S.get("fw_custom", []);
         c.push({
           id: "c_" + Date.now(),
           name,
-          level: "Custom",
-          desc: $("bd").value,
+          level: wm ? "Custom" : "Single workout",
+          single: !wm,
+          desc: B.desc,
           days,
         });
         S.set("fw_custom", c);
+        B = { name: "", desc: "", day: "Monday", mode: B.mode, days: {} };
+        alert("Saved! Find it below or on the Routines page.");
         render();
       }
       function impJ() {
@@ -1304,6 +1910,180 @@
         $("mt").textContent = n + " – video tutorial";
         $("mv").innerHTML = h;
         $("modal").classList.add("on");
+      }
+      const G = [
+        [
+          "Hamstrings",
+          "Legs",
+          "The muscles at the back of your thigh. They bend your knee and extend your hip. Train them with leg curls and Romanian deadlifts.",
+        ],
+        [
+          "Quadriceps",
+          "Legs",
+          "Four muscles at the front of the thigh that straighten the knee. Squats, lunges and the leg press build them.",
+        ],
+        [
+          "Glutes",
+          "Legs",
+          "Your buttock muscles, the largest in the body. They power squats, deadlifts and lunges.",
+        ],
+        [
+          "Calves",
+          "Legs",
+          "Muscles at the back of the lower leg that lift your heel. Trained with calf raises.",
+        ],
+        [
+          "Lats (Latissimus dorsi)",
+          "Back",
+          "Broad muscles on the sides of your back that pull your arms down and back, as in pull-ups and lat pull-downs.",
+        ],
+        [
+          "Traps (Trapezius)",
+          "Back",
+          "A diamond-shaped muscle from the neck to mid-back that lifts and squeezes the shoulder blades.",
+        ],
+        [
+          "Deltoids",
+          "Shoulders",
+          "The rounded shoulder muscle, with front, side and rear parts. Used in every pressing and raising move.",
+        ],
+        [
+          "Rear delts",
+          "Shoulders",
+          "The back of the shoulder. Often neglected; reverse pec deck targets it and helps posture.",
+        ],
+        [
+          "Pecs (Pectorals)",
+          "Chest",
+          "The chest muscles that push your arms forward and together. Bench press, push-ups and flys.",
+        ],
+        [
+          "Biceps",
+          "Biceps",
+          "Front of the upper arm. Bends the elbow and turns the palm up.",
+        ],
+        [
+          "Triceps",
+          "Triceps",
+          "Back of the upper arm. Straightens the elbow and makes up about two-thirds of arm size.",
+        ],
+        [
+          "Core",
+          "Core",
+          "Abs, obliques and deep trunk muscles that keep your spine stable. Planks train them.",
+        ],
+        [
+          "Set and rep",
+          "Other",
+          "A rep is one full movement; a set is a group of reps. 3 sets × 10 reps means 10 reps, rest, and repeat 3 times.",
+        ],
+        [
+          "Progressive overload",
+          "Other",
+          "Gradually adding weight, reps or sets over time so your muscles keep adapting.",
+        ],
+        [
+          "Superset",
+          "Other",
+          "Two exercises done back to back with no rest in between.",
+        ],
+        [
+          "Warm-up",
+          "Mobility",
+          "Light movement before training that raises body temperature and prepares your joints.",
+        ],
+      ];
+      function weekHTML(r) {
+        const t = todayName();
+        return (
+          `<div class="wk">` +
+          (r.single ? ["Monday"] : DAYS)
+            .map((x) => {
+              const d = r.days[x] || {};
+              return (
+                `<div class="wc ${x === t && !r.single ? "t" : ""} ${d.rest ? "rs" : ""}"><h4><small>${r.single ? "WORKOUT" : x.slice(0, 3).toUpperCase()}</small>${esc(d.title || "Rest")}</h4>` +
+                (d.rest
+                  ? '<div class="mut" style="font-size:13px">😴 Rest day</div>'
+                  : (d.sections || [])
+                      .map(
+                        (c) =>
+                          `<div class="wsec">${esc(c.n)}</div><ul class="wl">${c.items
+                            .map((i) => {
+                              const [a, b] = i.split("|"),
+                                g = tg(b);
+                              return `<li><span>${esc(a)}</span><em>${g.t === "s" && g.sets && g.reps ? g.sets + " × " + esc(g.reps) : esc(b || "")}</em></li>`;
+                            })
+                            .join("")}</ul>`,
+                      )
+                      .join("")) +
+                `</div>`
+              );
+            })
+            .join("") +
+          `</div>`
+        );
+      }
+      function openW(id) {
+        const r = all().find((x) => x.id === id);
+        if (!r) return;
+        $("mt2").textContent = r.name;
+        $("mw").innerHTML = weekHTML(r);
+        $("modal2").classList.add("on");
+      }
+      function closeW() {
+        $("modal2").classList.remove("on");
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeW();
+      });
+      const exForm = () =>
+        `<details class="card" style="margin:12px 0"><summary><b>+ Add your own exercise</b></summary><div class="row" style="margin-top:12px"><label class="fl nm">Name<input id="xn" placeholder="e.g. Cable crunch"></label><label class="fl">Muscle group<select id="xg">${Object.keys(
+          D.groups,
+        )
+          .map((g) => `<option>${g}</option>`)
+          .join(
+            "",
+          )}</select></label></div><label class="fl" style="margin-top:10px">Description<textarea id="xd" style="min-height:70px" placeholder="How to perform it"></textarea></label><div class="row" style="margin:10px 0"><label class="fl">Thumbnail (optional)<input id="xf" type="file" accept="image/*"></label><label class="fl">Video link (optional)<input id="xv" placeholder="YouTube, Vimeo or .mp4 link"></label></div><p class="mut" style="font-size:12px">No thumbnail? A picture is chosen from the muscle group.</p><button class="btn" onclick="addEx()">Save exercise</button></details>`;
+      function addEx() {
+        const n = $("xn").value.trim();
+        if (!n) {
+          alert("Please enter a name.");
+          return;
+        }
+        const f = $("xf").files[0],
+          sv = (th) => {
+            const c = S.get("fw_cx", {});
+            c[n] = [
+              $("xg").value,
+              $("xd").value.trim() || "Custom exercise.",
+              $("xv").value.trim(),
+              th || "",
+            ];
+            S.set("fw_cx", c);
+            render();
+          };
+        if (!f) return sv();
+        const rd = new FileReader();
+        rd.onload = () => {
+          const im = new Image();
+          im.onload = () => {
+            const k = Math.min(1, 480 / Math.max(im.width, im.height)),
+              cv = document.createElement("canvas");
+            cv.width = im.width * k;
+            cv.height = im.height * k;
+            cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+            sv(cv.toDataURL("image/jpeg", 0.75));
+          };
+          im.onerror = () => sv();
+          im.src = rd.result;
+        };
+        rd.readAsDataURL(f);
+      }
+      function delX(n) {
+        const c = S.get("fw_cx", {});
+        delete c[n];
+        S.set("fw_cx", c);
+        render();
       }
       function closeV() {
         $("modal").classList.remove("on");
