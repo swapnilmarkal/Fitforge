@@ -572,6 +572,71 @@
         font-style: normal;
         white-space: nowrap;
       }
+      body.lock {
+        position: fixed;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+      }
+      .modal {
+        overflow: auto;
+        overscroll-behavior: contain;
+      }
+      .m2 {
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        max-height: 76vh;
+      }
+      .jc {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        background: linear-gradient(120deg, #2a1608, #141821);
+        border: 1px solid #3a2a1c;
+        border-radius: 16px;
+        padding: 18px 12px;
+      }
+      .jc > div {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+      }
+      .jc span {
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        color: var(--mut);
+      }
+      .jc b {
+        display: block;
+        font-size: 26px;
+        margin: 2px 0;
+      }
+      .jc .arr {
+        flex: 0 0 76px;
+        font-size: 22px;
+        color: var(--ac2);
+      }
+      .chg {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .er {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+        flex-wrap: wrap;
+      }
+      @media (max-width: 600px) {
+        .jc b {
+          font-size: 20px;
+        }
+        .jc .arr {
+          flex-basis: 56px;
+        }
+      }
       footer {
         text-align: center;
         color: var(--mut);
@@ -1257,6 +1322,7 @@
         filter = "All",
         q = "",
         selDay = null,
+        selR = "",
         series = "Body weight",
         pdate = "";
       const V = {
@@ -1276,7 +1342,7 @@
         .join("");
       function go(v) {
         view = v;
-        selDay = null;
+        if (v !== "routines") selDay = null;
         render();
         scrollTo(0, 0);
       }
@@ -1369,11 +1435,13 @@
                 ])
               : dt < since
                 ? "This was before you began this plan. Your journey starts now, so make today count!"
-                : pk([
-                    "You missed this one, and that’s okay. Every champion has off days. What matters is the next one.",
-                    "Missed workouts don’t define you; coming back does. Let’s make today count.",
-                    "One skipped session won’t change you, but giving up will. Keep going!",
-                  ]);
+                : r.single
+                  ? "No session logged that day. This workout is open every day, so fit it in whenever you can!"
+                  : pk([
+                      "You missed this one, and that’s okay. Every champion has off days. What matters is the next one.",
+                      "Missed workouts don’t define you; coming back does. Let’s make today count.",
+                      "One skipped session won’t change you, but giving up will. Keep going!",
+                    ]);
           return `<div class="card" style="border-color:${isT ? "var(--ac)" : "#7f1d1d"}">${hd}${ttl}<p>${isT ? "💪" : "🔥"} ${m}</p>${isT ? `<button class="btn" onclick="go('today')">Start workout →</button>` : ""}</div>`;
         }
         let n = 0;
@@ -1609,7 +1677,7 @@
           return `<div class="hero"><div class="mut">${t} · ${new Date().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}</div><h1>Today: ${esc(d.title)}</h1><p class="mut">Active plan: ${esc(r.name)}</p><button class="btn" onclick="go('today')">Start workout →</button></div>
  <h2>This week</h2><div class="week">${wk(r)}</div><div class="mut" style="font-size:12px;margin-top:8px">🟢 worked out · 🔴 missed · 😴 rest day</div>
  <h2>Overview</h2><div class="grid">${dashStats(r)}</div>${dcards()}
- <h2>Daily motivation</h2><div class="card">${quote()}<button class="btn g sm" style="margin-top:12px" onclick="render()">Another quote</button></div>`;
+ <h2>Daily motivation</h2><div class="card">${quote()}<button class="btn g sm" style="margin-top:12px" onclick="render()">Another quote</button></div>${bkCard()}`;
         },
         today() {
           const r = active(),
@@ -1618,14 +1686,17 @@
         },
         routines() {
           const a = active(),
-            sel = selDay || todayName();
-          return `<h1>Workout routines</h1><p class="mut">Pick a plan to make it your active routine.</p><div class="grid" style="margin-top:14px">${all()
+            cur = all().find((r) => r.id === selR) || a,
+            sel = selDay || todayName(),
+            isA = cur.id === a.id;
+          return `<h1>Workout routines</h1><label class="fl" style="margin:14px 0 12px;font-size:12px">Choose a routine (★ = active)<select onchange="selR=this.value;selDay=null;render()">${all()
             .map(
               (r) =>
-                `<div class="card"><span class="tag">${esc(r.level || "Custom")}</span> ${r.id === a.id ? '<span class="tag" style="color:#6ee7a0">Active</span>' : ""}<h3 style="margin:8px 0 4px">${esc(r.name)}</h3><div class="mut" style="font-size:13px">${esc(r.desc || "")}</div><div class="row" style="margin-top:12px"><button class="btn sm" onclick="setA('${r.id}')">Use this plan</button><button class="btn g sm" onclick="openW('${r.id}')">View full week</button>${String(r.id).startsWith("c_") ? `<button class="btn g sm" onclick="delR('${r.id}')">Delete</button>` : ""}</div></div>`,
+                `<option value="${r.id}" ${r.id === cur.id ? "selected" : ""}>${r.id === a.id ? "★ " : ""}${esc(r.name)} · ${esc(r.level || "Custom")}${r.id === a.id ? " (Active)" : ""}</option>`,
             )
-            .join("")}</div>
- <h2>${esc(a.name)} — weekly view</h2><div class="chips">${DAYS.map((x) => `<span class="chip ${x === sel ? "on" : ""}" onclick="selDay='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div><h3>${sel}: ${esc(a.days[sel]?.title || "Rest")}</h3>${dayHTML(a, sel, false)}`;
+            .join("")}</select></label>
+ <div class="card"><span class="tag">${esc(cur.level || "Custom")}</span> ${isA ? '<span class="tag" style="color:#6ee7a0">★ Active</span>' : ""}<h3 style="margin:8px 0 4px;font-size:19px">${esc(cur.name)}</h3><div class="mut" style="font-size:13px">${esc(cur.desc || "")}</div><div class="row" style="margin-top:12px">${isA ? "" : `<button class="btn sm" onclick="setA('${cur.id}')">Use this</button>`}<button class="btn g sm" onclick="openW('${cur.id}')">Complete chart</button>${String(cur.id).startsWith("c_") ? `<button class="btn g sm" onclick="delR('${cur.id}')">Delete</button>` : ""}</div></div>
+ ${cur.single ? `<h2>Workout (every day)</h2>${dayHTML(cur, "Monday", false)}` : `<h2>Day by day</h2><div class="chips">${DAYS.map((x) => `<span class="chip ${x === sel ? "on" : ""}" onclick="selDay='${x}';render()">${x.slice(0, 3)}</span>`).join("")}</div><h3>${sel}: ${esc(cur.days[sel]?.title || "Rest")}</h3>${dayHTML(cur, sel, false)}`}`;
         },
         lib() {
           const gs = [
@@ -1674,18 +1745,18 @@
    .join(
      "",
    )}</select><input id="ld" type="date" value="${iso()}"><input id="lv" type="number" step="0.1" placeholder="Weight in kg"><button class="btn" onclick="addLog()">Add entry</button></div><datalist id="dl">${["Body weight", ...Object.keys(allEx())].map((n) => `<option value="${esc(n)}">`).join("")}</datalist></div>
- <h2>Body weight summary</h2>${(() => {
+ <h2>Your journey</h2>${(() => {
    const b = logs
      .filter((l) => l.s === "Body weight")
      .sort((x, y) => (x.d < y.d ? -1 : 1));
    if (!b.length)
-     return '<p class="mut">Log your body weight to see your summary.</p>';
+     return '<p class="mut">Log your body weight to see your journey.</p>';
    const f = b[0],
      l = b[b.length - 1],
-     dd = (l.v - f.v).toFixed(1);
-   return `<div class="grid"><div class="card stat"><span class="mut">Starting</span><b>${f.v} kg</b><span class="mut" style="font-size:12px">${f.d}</span></div><div class="card stat"><span class="mut">Latest</span><b>${l.v} kg</b><span>${bpill(l.b)}</span></div><div class="card stat"><span class="mut">Change</span><b style="color:${dd <= 0 ? "#6ee7a0" : "var(--ac2)"}">${dd > 0 ? "+" : ""}${dd} kg</b></div></div>`;
+     dd = +(l.v - f.v).toFixed(1);
+   return `<div class="jc"><div><span>STARTING</span><b>${f.v} kg</b><small class="mut">${f.d}</small></div><div class="arr">→<div class="chg" style="color:${dd <= 0 ? "#6ee7a0" : "var(--ac2)"}">${dd > 0 ? "+" : ""}${dd} kg</div></div><div><span>CURRENT</span><b>${l.v} kg</b><div style="margin-top:4px">${bpill(l.b)}</div></div></div>`;
  })()}
- <h2>Entries</h2><div class="card"><div class="row" style="margin-bottom:10px"><label class="fl">Show a specific day<input type="date" value="${pdate}" onchange="pdate=this.value;render()"></label><button class="btn g sm" style="flex:0 0 auto" onclick="pdate='';render()">Show latest</button></div><div class="sc"><table><tr><th>Date</th><th>Entry</th><th>Weight</th><th>BMI</th><th></th></tr>${rows.map(([l, i]) => `<tr><td>${l.d}</td><td>${esc(l.s)}</td><td>${l.v} kg</td><td>${l.s === "Body weight" ? bpill(l.b) : "—"}</td><td><button class="btn g sm" onclick="delL(${i})">✕</button></td></tr>`).join("") || '<tr><td colspan=5 class="mut">No entries for this view.</td></tr>'}</table></div></div>`;
+ <h2>Entries</h2><div class="card"><div class="row" style="margin-bottom:6px"><label class="fl">Show a specific day<input type="date" value="${pdate}" onchange="pdate=this.value;render()"></label><button class="btn g sm" style="flex:0 0 auto" onclick="pdate='';render()">Show latest</button></div>${rows.map(([l, i]) => `<div class="er"><div style="flex:1;min-width:0"><b>${l.v} kg</b> <span class="mut" style="font-size:13px">${esc(l.s)}</span><div class="mut" style="font-size:12px">${l.d}</div></div>${l.s === "Body weight" ? bpill(l.b) : ""}<button class="btn g sm" onclick="delL(${i})">✕</button></div>`).join("") || '<p class="mut">No entries for this view.</p>'}</div>`;
         },
         build() {
           const d = gd(),
@@ -1733,6 +1804,7 @@
       function setA(id) {
         S.set("fw_active", id);
         S.set("fw_since", iso());
+        selR = "";
         go("today");
       }
       function delR(id) {
@@ -1911,6 +1983,7 @@
         $("mt").textContent = n + " – video tutorial";
         $("mv").innerHTML = h;
         $("modal").classList.add("on");
+        lock();
       }
       const G = [
         [
@@ -2030,9 +2103,29 @@
         $("mt2").textContent = r.name;
         $("mw").innerHTML = weekHTML(r);
         $("modal2").classList.add("on");
+        lock();
       }
       function closeW() {
         $("modal2").classList.remove("on");
+        unlock();
+      }
+      function lock() {
+        const b = document.body;
+        if (b.classList.contains("lock")) return;
+        b.dataset.y = scrollY;
+        b.style.top = -scrollY + "px";
+        b.classList.add("lock");
+      }
+      function unlock() {
+        const b = document.body;
+        if (
+          !b.classList.contains("lock") ||
+          document.querySelector(".modal.on")
+        )
+          return;
+        b.classList.remove("lock");
+        b.style.top = "";
+        scrollTo(0, +b.dataset.y || 0);
       }
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeW();
@@ -2089,10 +2182,92 @@
       function closeV() {
         $("modal").classList.remove("on");
         $("mv").innerHTML = "";
+        unlock();
       }
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeV();
       });
+      function bkCard() {
+        return `<h2>Backup &amp; transfer</h2><div class="card"><p class="mut" style="margin-top:0">Your data is saved in this browser only. Download a backup to keep it safe or move it to another device, then import it there.</p><div class="row"><button class="btn" onclick="expD()">⬇ Download backup</button><label class="fl">Import a backup file<input type="file" accept=".json,application/json" onchange="impF(this.files[0])"></label></div>
+ <details style="margin-top:12px"><summary class="mut">Prefer copy &amp; paste?</summary><textarea id="bk" style="min-height:100px;margin-top:8px"></textarea><div class="row" style="margin-top:8px"><button class="btn g sm" onclick="$('bk').value=bkJSON()">Show my backup</button><button class="btn g sm" onclick="impT($('bk').value)">Import pasted backup</button></div></details></div>`;
+      }
+      function bkJSON() {
+        const d = {};
+        try {
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith("fw_"))
+            .forEach((k) => (d[k] = S.get(k, null)));
+        } catch (e) {}
+        return JSON.stringify({ app: "fitforge", v: 1, saved: iso(), data: d });
+      }
+      async function expD() {
+        let dl = null;
+        try {
+          dl = window.claude && (await claude.use("downloads"));
+        } catch (e) {}
+        if (!dl) {
+          $("bk").value = bkJSON();
+          $("bk").closest("details").open = true;
+          alert(
+            "Direct download is not available here. Copy the text from the box and save it somewhere safe.",
+          );
+          return;
+        }
+        try {
+          await dl.save({
+            filename: "fitforge-backup-" + iso() + ".json",
+            data: bkJSON(),
+          });
+        } catch (e) {
+          if (!e || e.code !== "declined")
+            alert(
+              "Could not save the file (" +
+                ((e && e.message) || "unavailable") +
+                "). Use copy & paste instead.",
+            );
+        }
+      }
+      function impF(f) {
+        if (!f) return;
+        const r = new FileReader();
+        r.onload = () => impT(r.result);
+        r.readAsText(f);
+      }
+      function impT(t) {
+        try {
+          const j = JSON.parse(t);
+          if (j.app !== "fitforge") throw 0;
+          if (!confirm("Merge this backup into the data on this device?"))
+            return;
+          const d = j.data;
+          for (const k in d) {
+            if (!k.startsWith("fw_")) continue;
+            const v = d[k],
+              cur = S.get(k, null);
+            let nv = v;
+            if (k === "fw_logs" && Array.isArray(cur)) {
+              const m = {};
+              [...v, ...cur].forEach((x) => (m[x.d + "|" + x.s] = x));
+              nv = Object.values(m);
+            } else if (k === "fw_custom" && Array.isArray(cur)) {
+              const m = {};
+              [...v, ...cur].forEach((x) => (m[x.id] = x));
+              nv = Object.values(m);
+            } else if (k === "fw_wl" && cur) {
+              nv = { ...v };
+              for (const dd in cur) nv[dd] = { ...(v[dd] || {}), ...cur[dd] };
+            } else if (k === "fw_cx" && cur) nv = { ...v, ...cur };
+            else if (k.startsWith("fw_done_") && Array.isArray(cur))
+              nv = [...new Set([...v, ...cur])];
+            else if (cur !== null && typeof v !== "object") nv = cur;
+            S.set(k, nv);
+          }
+          alert("Backup imported!");
+          render();
+        } catch (e) {
+          alert("That does not look like a FitForge backup file.");
+        }
+      }
       render();
     </script>
   </body>
