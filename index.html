@@ -637,6 +637,36 @@
           flex-basis: 56px;
         }
       }
+      .eg {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr 1.5fr 40px;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 14px;
+      }
+      .eg.eh {
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--mut);
+        padding-top: 0;
+      }
+      .eg .pill {
+        white-space: nowrap;
+      }
+      @media (max-width: 420px) {
+        .eg {
+          grid-template-columns: 1fr 0.9fr 1.4fr 36px;
+          font-size: 13px;
+          gap: 6px;
+        }
+        .eg .pill {
+          font-size: 11px;
+          padding: 2px 6px;
+        }
+      }
       footer {
         text-align: center;
         color: var(--mut);
@@ -1714,49 +1744,15 @@
           return `<h1>Learn the basics</h1><p class="mut">Muscles and gym terms explained in plain language.</p><div class="grid" style="margin-top:14px">${G.map((g) => `<div class="card" style="padding:10px">${art(g[1])}<h3 style="margin:10px 0 4px">${esc(g[0])}</h3><p class="mut" style="font-size:13px;margin:0">${esc(g[2])}</p></div>`).join("")}</div>`;
         },
         prog() {
-          const logs = S.get("fw_logs", []),
-            h = S.get("fw_h", 0),
-            names = [...new Set(logs.map((l) => l.s))];
-          if (!names.includes(series)) names.unshift(series);
-          const pts = logs
-              .filter((l) => l.s === series)
-              .sort((a, b) => (a.d < b.d ? -1 : 1)),
-            vs = pts.map((p) => p.v),
-            mn = Math.min(...vs),
-            mx = Math.max(...vs),
-            rg = mx - mn || 1;
-          const P = pts.map((p, i) => [
-              pts.length > 1 ? 30 + i * (540 / (pts.length - 1)) : 300,
-              160 - ((p.v - mn) / rg) * 120,
-            ]),
-            delta =
-              pts.length > 1 ? (vs[vs.length - 1] - vs[0]).toFixed(1) : null;
-          const rows = logs
-            .map((l, i) => [l, i])
-            .filter((x) => !pdate || x[0].d === pdate)
-            .sort((a, b) => (a[0].d < b[0].d ? 1 : -1))
-            .slice(0, pdate ? 50 : 15);
-          return `<h1>Progress tracker</h1><p class="mut">Log your body weight any day (daily or whenever you like), and track lifts too.</p>
- <div class="card" style="margin:14px 0"><div class="row"><input id="ht" type="number" placeholder="Your height in cm, e.g. 170" value="${h || ""}"><button class="btn g" onclick="saveH()">${h ? "Update" : "Save"} height</button></div><div class="mut" style="font-size:13px;margin-top:8px">Height is used to calculate BMI whenever you log body weight. 🟡 under 18.5 · 🟢 18.5–24.9 · 🔴 25 or more</div></div>
- <div class="card"><div class="row"><select id="ls"><option>Body weight</option>${Object.keys(
-   allEx(),
- )
-   .map((n) => `<option>${esc(n)}</option>`)
-   .join(
-     "",
-   )}</select><input id="ld" type="date" value="${iso()}"><input id="lv" type="number" step="0.1" placeholder="Weight in kg"><button class="btn" onclick="addLog()">Add entry</button></div><datalist id="dl">${["Body weight", ...Object.keys(allEx())].map((n) => `<option value="${esc(n)}">`).join("")}</datalist></div>
- <h2>Your journey</h2>${(() => {
-   const b = logs
-     .filter((l) => l.s === "Body weight")
-     .sort((x, y) => (x.d < y.d ? -1 : 1));
-   if (!b.length)
-     return '<p class="mut">Log your body weight to see your journey.</p>';
-   const f = b[0],
-     l = b[b.length - 1],
-     dd = +(l.v - f.v).toFixed(1);
-   return `<div class="jc"><div><span>STARTING</span><b>${f.v} kg</b><small class="mut">${f.d}</small></div><div class="arr">→<div class="chg" style="color:${dd <= 0 ? "#6ee7a0" : "var(--ac2)"}">${dd > 0 ? "+" : ""}${dd} kg</div></div><div><span>CURRENT</span><b>${l.v} kg</b><div style="margin-top:4px">${bpill(l.b)}</div></div></div>`;
- })()}
- <h2>Entries</h2><div class="card"><div class="row" style="margin-bottom:6px"><label class="fl">Show a specific day<input type="date" value="${pdate}" onchange="pdate=this.value;render()"></label><button class="btn g sm" style="flex:0 0 auto" onclick="pdate='';render()">Show latest</button></div>${rows.map(([l, i]) => `<div class="er"><div style="flex:1;min-width:0"><b>${l.v} kg</b> <span class="mut" style="font-size:13px">${esc(l.s)}</span><div class="mut" style="font-size:12px">${l.d}</div></div>${l.s === "Body weight" ? bpill(l.b) : ""}<button class="btn g sm" onclick="delL(${i})">✕</button></div>`).join("") || '<p class="mut">No entries for this view.</p>'}</div>`;
+          const h = S.get("fw_h", 0),
+            rows = S.get("fw_logs", [])
+              .map((l, i) => [l, i])
+              .filter((x) => x[0].s === "Body weight")
+              .sort((a, b) => (a[0].d < b[0].d ? 1 : -1));
+          return `<h1>Body weight</h1><p class="mut">Log your weight whenever you like and see it below.</p>
+ <div class="card" style="margin:14px 0"><div class="row"><label class="fl">Height (cm)<input id="ht" type="number" placeholder="e.g. 170" value="${h || ""}"></label><button class="btn g" style="flex:0 0 auto;align-self:flex-end" onclick="saveH()">${h ? "Update" : "Save"}</button></div><div class="mut" style="font-size:12px;margin-top:8px">Used to calculate BMI: 🟡 under 18.5 · 🟢 18.5–24.9 · 🔴 25 or more</div></div>
+ <div class="card"><div class="row"><label class="fl">Date<input id="ld" type="date" value="${iso()}"></label><label class="fl">Weight (kg)<input id="lv" type="number" step="0.1" placeholder="e.g. 72.5"></label><button class="btn" style="flex:0 0 auto;align-self:flex-end" onclick="addLog()">Add</button></div></div>
+ <h2>Entries</h2><div class="card">${rows.length ? `<div class="eg eh"><span>Date</span><span>Weight</span><span>BMI</span><span></span></div>` + rows.map(([l, i]) => `<div class="eg"><span>${l.d}</span><b>${l.v} kg</b><span>${bpill(l.b)}</span><button class="btn g sm" onclick="delL(${i})">✕</button></div>`).join("") : '<p class="mut">No entries yet.</p>'}</div>`;
         },
         build() {
           const d = gd(),
@@ -1816,23 +1812,19 @@
         render();
       }
       function addLog() {
-        const s = $("ls").value.trim() || "Body weight",
+        const s = "Body weight",
           v = parseFloat($("lv").value),
           dt = $("ld").value,
           h = S.get("fw_h", 0);
         if (!v || !dt) return;
-        if (s === "Body weight" && !h) {
+        if (!h) {
           alert("Please save your height first so BMI can be calculated.");
           return;
         }
-        const e = { d: dt, s, v };
-        if (s === "Body weight") e.b = +(v / (h / 100) ** 2).toFixed(1);
-        const l = S.get("fw_logs", []).filter(
-          (x) => !(x.d === dt && x.s === s),
-        );
+        const e = { d: dt, s, v, b: +(v / (h / 100) ** 2).toFixed(1) },
+          l = S.get("fw_logs", []).filter((x) => !(x.d === dt && x.s === s));
         l.push(e);
         S.set("fw_logs", l);
-        series = s;
         render();
       }
       function saveH() {
